@@ -1,6 +1,6 @@
 import React from 'react';
 import { Heart, Code, Palette } from 'lucide-react';
-import { TEAM } from '../constants';
+import { TEAM, ASSETS } from '../constants';
 
 export const About: React.FC = () => {
   return (
@@ -28,6 +28,7 @@ export const About: React.FC = () => {
                     src={member.avatarUrl} 
                     alt={member.name} 
                     className="w-full h-full rounded-full object-cover" 
+                    onError={(e) => { (e.currentTarget as HTMLImageElement).src = ASSETS.PLACEHOLDER_AVATAR; }}
                   />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900">{member.name}</h3>

@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, Smartphone, Monitor, Globe } from 'lucide-react';
+import { ArrowUpRight, Smartphone, Monitor, Globe, Star, Gamepad2 } from 'lucide-react';
 import { Game } from '../types';
+import { ASSETS } from '../constants';
 
 interface GameCardProps {
   game: Game;
@@ -18,42 +19,44 @@ export const GameCard: React.FC<GameCardProps> = ({ game }) => {
   };
 
   return (
-    <div className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-orange-50 flex flex-col h-full transform hover:-translate-y-1">
-      <div className="relative overflow-hidden h-48 sm:h-56">
-        <img 
-          src={game.thumbnailUrl} 
-          alt={game.title} 
-          className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
-        />
-        <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-orange-600 shadow-sm uppercase tracking-wider">
-          {game.status}
+    <div className="group bg-white rounded-2xl border border-orange-100 shadow-sm hover:shadow-md transition-all">
+      <div className="p-4 flex gap-4">
+        <div className="w-20 h-20 rounded-2xl overflow-hidden bg-orange-50 flex-shrink-0 border border-orange-100">
+          <img
+            src={game.thumbnailUrl}
+            alt={game.title}
+            className="w-full h-full object-cover"
+            onError={(e) => { (e.currentTarget as HTMLImageElement).src = ASSETS.PLACEHOLDER_APP; }}
+          />
         </div>
-      </div>
-      
-      <div className="p-6 flex flex-col flex-grow">
-        <div className="flex items-center gap-2 mb-3 text-gray-500 text-sm font-semibold">
-           {getPlatformIcon(game.platform)}
-           <span>{game.platform}</span>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <h3 className="text-lg font-bold text-gray-900 truncate">{game.title}</h3>
+            <span className="inline-flex items-center gap-1 text-xs font-semibold text-gray-500">
+              {getPlatformIcon(game.platform)}
+              {game.platform}
+            </span>
+          </div>
+          <div className="flex items-center gap-1 text-sm text-gray-600 mt-1">
+            <Star size={16} className="text-orange-500" />
+            <span>5.0</span>
+            <span>•</span>
+            <span>Gratis</span>
+          </div>
+          <p className="text-gray-600 text-sm mt-2">
+            {game.description}
+          </p>
+          <div className="mt-4">
+            <Link
+              to={`/games/${game.id}`}
+              className="inline-flex items-center px-4 py-2 rounded-full bg-orange-500 text-white text-sm font-bold hover:bg-orange-600 transition-colors"
+            >
+              Ver detalles
+              <ArrowUpRight className="ml-2 w-4 h-4" />
+            </Link>
+          </div>
         </div>
-        
-        <h3 className="text-2xl font-black text-gray-800 mb-2 group-hover:text-orange-600 transition-colors">
-          {game.title}
-        </h3>
-        
-        <p className="text-gray-600 mb-6 flex-grow leading-relaxed">
-          {game.description}
-        </p>
-        
-        <Link 
-          to={`/games/${game.id}`}
-          className="inline-flex items-center justify-center w-full py-3 rounded-xl bg-orange-50 text-orange-700 font-bold group-hover:bg-orange-500 group-hover:text-white transition-all duration-300"
-        >
-          Ver Detalles
-          <ArrowUpRight className="ml-2 w-4 h-4" />
-        </Link>
       </div>
     </div>
   );
 };
-
-import { Gamepad2 } from 'lucide-react';

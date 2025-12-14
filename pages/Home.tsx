@@ -18,7 +18,7 @@ export const Home: React.FC = () => {
             Nuestros Proyectos
           </span>
           <h2 className="text-4xl md:text-5xl font-black text-gray-900">
-            Biblioteca de Diversión
+            Biblioteca de juegos
           </h2>
         </div>
         

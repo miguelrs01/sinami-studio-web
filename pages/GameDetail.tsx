@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ExternalLink, Download, Star } from 'lucide-react';
-import { GAMES } from '../constants';
+import { GAMES, ASSETS } from '../constants';
 
 export const GameDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -26,9 +26,9 @@ export const GameDetail: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Header for Game */}
-      <div className="relative h-[60vh] w-full bg-gray-900 overflow-hidden">
+      <div className="relative h-[40vh] md:h-[50vh] w-full bg-gray-900 overflow-hidden">
         <div className="absolute inset-0 opacity-60">
-            <img src={game.heroUrl} alt={game.title} className="w-full h-full object-cover" />
+            <img src={game.heroUrl} alt={game.title} className="w-full h-full object-cover" onError={(e) => { (e.currentTarget as HTMLImageElement).src = ASSETS.FALLBACK_BANNER; }} />
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>
         
@@ -50,59 +50,60 @@ export const GameDetail: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           
-          <div className="lg:col-span-2">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">Sobre el juego</h2>
-            <p className="text-xl text-gray-600 leading-relaxed mb-8">
-              {game.longDescription}
-            </p>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
-               {/* Placeholders for screenshots */}
-               <div className="aspect-video bg-gray-100 rounded-xl overflow-hidden shadow-md">
-                 <img src={`https://picsum.photos/seed/${game.id}1/600/400`} alt="Gameplay 1" className="w-full h-full object-cover" />
-               </div>
-               <div className="aspect-video bg-gray-100 rounded-xl overflow-hidden shadow-md">
-                 <img src={`https://picsum.photos/seed/${game.id}2/600/400`} alt="Gameplay 2" className="w-full h-full object-cover" />
-               </div>
-            </div>
+      <div className="lg:col-span-2">
+        <h2 className="text-3xl font-bold text-gray-900 mb-6">Sobre el juego</h2>
+        <p className="text-xl text-gray-600 leading-relaxed mb-8">
+          {game.longDescription}
+        </p>
+        
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
+          {/* Screenshots en formato móvil */}
+          <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
+            <img src="https://play-lh.googleusercontent.com/9SNvkbT9RuCyEmKKgfv0873unHH8TdIWtQa4fJdRpmVan17IsjjX1Vi5RgUQf3Fj1tdhH8NiU0nHGkTapWcXEA=w1052-h592-rw" alt="Gameplay 1" className="w-full h-full object-cover" />
           </div>
+          <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
+            <img src="https://play-lh.googleusercontent.com/0w_dDHNLZ8t0EzJekQ4SvDWwQq2TaUnYJFSkx0ipXXD75iz89leo5VvAcGsxV_cuYZ0_k9PBbeS8twDhB3Y6=w1052-h592-rw" alt="Gameplay 2" className="w-full h-full object-cover" />
+          </div>
+          <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
+            <img src="https://play-lh.googleusercontent.com/kisN7RMqEOb833h8lPrfjRg14WMt5DhIKnMnyhfe6r6pMhIJQuwaNygG7sOZ0i6iqAPfxiHAYrq2uzV7yh_SkA=w1052-h592-rw" alt="Gameplay 3" className="w-full h-full object-cover" />
+          </div>
+          <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
+            <img src="https://play-lh.googleusercontent.com/losq93-h_gKudEY2o68L9zHtcJCz7X7zAybaAteTpPjgSN6S-zwbV5movUJ2DhKIQP3URDegj_vep0GeVOWCFg=w1052-h592-rw" alt="Gameplay 4" className="w-full h-full object-cover" />
+          </div>
+        </div>
+      </div>
 
           <div className="lg:col-span-1">
             <div className="bg-orange-50 rounded-2xl p-8 sticky top-24 shadow-sm border border-orange-100">
               <div className="w-24 h-24 bg-white rounded-2xl shadow-md mb-6 overflow-hidden">
-                <img src={game.thumbnailUrl} alt="Icon" className="w-full h-full object-cover" />
+                <img src={game.thumbnailUrl} alt="Icon" className="w-full h-full object-cover" onError={(e) => { (e.currentTarget as HTMLImageElement).src = ASSETS.PLACEHOLDER_APP; }} />
               </div>
               
               <div className="space-y-4">
-                 <button className="w-full bg-black text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors shadow-lg">
+                <a 
+                  href="https://play.google.com/store/apps/details?id=com.mrodr.yonunca" 
+                  target="_blank" 
+                  rel="noreferrer"
+                >
+                  <button className="w-full bg-black text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors shadow-lg cursor-pointer">
                     <Download size={20} />
                     Descargar Ahora
-                 </button>
-                 
-                 {game.appLink && (
-                   <a 
-                     href={game.appLink} 
-                     target="_blank" 
-                     rel="noreferrer" 
-                     className="w-full bg-white text-orange-600 border-2 border-orange-100 font-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-orange-50 transition-colors"
-                   >
-                      <ExternalLink size={20} />
-                      Visitar Web Oficial
-                   </a>
-                 )}
+                  </button>
+                </a>
               </div>
+
 
               <div className="mt-8 pt-8 border-t border-orange-200">
                  <h3 className="font-bold text-gray-900 mb-4">Características</h3>
                  <ul className="space-y-3">
                    <li className="flex items-center text-gray-600">
-                     <Star size={16} className="text-orange-500 mr-2" /> Single Player
+                     <Star size={16} className="text-orange-500 mr-2" /> Multijugador offline
                    </li>
                    <li className="flex items-center text-gray-600">
-                     <Star size={16} className="text-orange-500 mr-2" /> Offline Mode
+                     <Star size={16} className="text-orange-500 mr-2" /> Modo normal y +18
                    </li>
                    <li className="flex items-center text-gray-600">
-                     <Star size={16} className="text-orange-500 mr-2" /> Family Friendly
+                     <Star size={16} className="text-orange-500 mr-2" /> +300 frases
                    </li>
                  </ul>
               </div>

@@ -45,14 +45,14 @@ export const Footer: React.FC = () => {
           <div className="col-span-1">
             <h4 className="text-lg font-bold mb-4 text-orange-400">Síguenos</h4>
             <div className="flex space-x-4">
-              <a href="#" aria-label="Threads" className="bg-gray-800 p-2 rounded-lg hover:bg-orange-500 hover:text-white transition-all">
+              <a href="https://www.threads.com/@sinamistudio" target="_blank" rel="noreferrer" aria-label="Threads" className="bg-gray-800 p-2 rounded-lg hover:bg-orange-500 hover:text-white transition-all">
                 {/* Custom SVG for Threads icon */}
                 <svg viewBox="0 0 192 192" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="16" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M141.537 123.072C151.011 114.771 157.043 103.046 157.043 89.9482C157.043 55.0862 129.563 26.8604 96.0049 26.8604C62.4468 26.8604 35.1528 55.2443 35.1528 89.9482C35.1528 123.456 61.642 153.256 96.0049 153.256C112.545 153.256 127.34 146.963 138.489 137.017L146.062 147.954C132.899 160.89 115.118 168.044 96.0049 168.044C52.7937 168.044 22 131.789 22 89.9482C22 47.0189 54.7645 14 96.0049 14C138.452 14 170 47.2882 170 89.9482C170 102.261 167.312 113.397 162.775 122.954C157.859 133.303 145.451 140.232 132.844 140.232C123.75 140.232 117.859 133.911 117.859 125.751V125.663C117.859 115.004 125.684 107.16 135.532 107.16C140.407 107.16 144.133 108.995 146.476 111.45" />
                   <path d="M129.563 89.9482C129.563 72.8488 114.636 58.4043 96.0049 58.4043C77.3735 58.4043 62.4468 72.8488 62.4468 89.9482C62.4468 107.048 77.3735 121.492 96.0049 121.492C105.77 121.492 114.394 117.701 120.59 111.956" />
                 </svg>
               </a>
-              <a href="#" aria-label="Instagram" className="bg-gray-800 p-2 rounded-lg hover:bg-orange-500 hover:text-white transition-all">
+              <a href="https://www.instagram.com/sinamistudio/?utm_source=ig_web_button_share_sheet" target="_blank" rel="noreferrer" aria-label="Instagram" className="bg-gray-800 p-2 rounded-lg hover:bg-orange-500 hover:text-white transition-all">
                 <Instagram size={20} />
               </a>
               <a href="mailto:sinami.studio22@gmail.com" aria-label="Email" className="bg-gray-800 p-2 rounded-lg hover:bg-orange-500 hover:text-white transition-all">
