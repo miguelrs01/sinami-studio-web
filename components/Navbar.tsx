@@ -30,6 +30,7 @@ export const Navbar: React.FC = () => {
                  src={SAFE_ASSETS.LOGO} 
                  alt="Sinami Studio Logo" 
                  className="w-full h-full object-cover p-1"
+                 onError={(e) => { (e.currentTarget as HTMLImageElement).src = SAFE_ASSETS.FALLBACK_LOGO; }}
                />
             </div>
             <span className="font-extrabold text-2xl tracking-tight text-gray-800 group-hover:text-orange-600 transition-colors">

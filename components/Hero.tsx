@@ -11,12 +11,13 @@ export const Hero: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20 relative z-10">
         
-        {/* Banner Image Container */}
+         {/* Banner Image Container */}
         <div className="w-full rounded-3xl overflow-hidden shadow-2xl border-4 border-white mb-10 transform transition-transform hover:scale-[1.01] duration-500">
            <img 
             src={SAFE_ASSETS.BANNER} 
             alt="Sinami Studio Banner - Juega, Organiza, Vive" 
             className="w-full h-auto object-cover"
+            onError={(e) => { (e.currentTarget as HTMLImageElement).src = SAFE_ASSETS.FALLBACK_BANNER; }}
            />
         </div>
 

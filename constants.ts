@@ -1,18 +1,21 @@
 import { Game, TeamMember } from './types';
 
-// NOTA: Para producción, guarda tus imágenes reales en una carpeta '/public/assets' 
-// y cambia estas URLs por rutas locales como: "/assets/logo.png"
+const BASE_URL = import.meta.env.BASE_URL || '/';
+const logoLocal = new URL('assets/logo.png', BASE_URL).toString();
+const bannerLocal = new URL('assets/banner.png', BASE_URL).toString();
 
 export const ASSETS = {
-  // Usando un placeholder estable temático hasta que subas tu logo local
-  LOGO: "https://api.dicebear.com/7.x/identicon/svg?seed=SinamiStudio&backgroundColor=transparent", 
-  // Banner temático de videojuegos/creatividad (estable)
-  BANNER: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop"
+  LOGO: logoLocal,
+  BANNER: bannerLocal,
+  FALLBACK_LOGO: "https://api.dicebear.com/7.x/identicon/svg?seed=SinamiStudio&backgroundColor=transparent",
+  FALLBACK_BANNER: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop"
 };
 
 export const SAFE_ASSETS = {
-    LOGO: ASSETS.LOGO, 
-    BANNER: ASSETS.BANNER
+  LOGO: ASSETS.LOGO,
+  BANNER: ASSETS.BANNER,
+  FALLBACK_LOGO: ASSETS.FALLBACK_LOGO,
+  FALLBACK_BANNER: ASSETS.FALLBACK_BANNER
 }
 
 export const GAMES: Game[] = [

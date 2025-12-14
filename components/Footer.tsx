@@ -13,7 +13,12 @@ export const Footer: React.FC = () => {
           
           <div className="col-span-1 md:col-span-1">
             <div className="flex items-center gap-3 mb-4">
-              <img src={SAFE_ASSETS.LOGO} alt="Sinami Logo" className="w-10 h-10 rounded-lg bg-white p-1" />
+              <img 
+                src={SAFE_ASSETS.LOGO} 
+                alt="Sinami Logo" 
+                className="w-10 h-10 rounded-lg bg-white p-1"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = SAFE_ASSETS.FALLBACK_LOGO; }}
+              />
               <span className="text-2xl font-bold tracking-tighter text-white">SINAMI</span>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed">
