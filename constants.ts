@@ -30,7 +30,8 @@ export const GAMES: Game[] = [
     heroUrl: `https://play-lh.googleusercontent.com/_4ACHU0CaAC0Isw-q9aMUQMs3dBCec-JstegoKjKHs4eMdsbgcgMMWoXr-mK1jsG0R7o4_z5SLVyGiH-wk1d7_g=w480-h960`,
     platform: "Mobile",
     status: "Released",
-    appLink: "https://play.google.com/store/apps/details?id=com.mrodr.yonunca"
+    appLink: "https://play.google.com/store/apps/details?id=com.mrodr.yonunca",
+    appIosLink: ""
   }
 ];
 

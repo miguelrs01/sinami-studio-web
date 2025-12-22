@@ -8,6 +8,7 @@ export interface Game {
   platform: 'Mobile' | 'PC' | 'Web' | 'Cross-platform';
   status: 'Released' | 'In Development' | 'Beta';
   appLink?: string; // Link to play or download
+  appIosLink?: string; // Link to play or download on IOS
 }
 
 export interface TeamMember {

@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ExternalLink, Download, Star } from 'lucide-react';
 import { GAMES, ASSETS } from '../constants';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGooglePlay, faAppStoreIos } from '@fortawesome/free-brands-svg-icons';
 
 export const GameDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -75,37 +77,64 @@ export const GameDetail: React.FC = () => {
 
           <div className="lg:col-span-1">
             <div className="bg-orange-50 rounded-2xl p-8 sticky top-24 shadow-sm border border-orange-100">
-              <div className="w-24 h-24 bg-white rounded-2xl shadow-md mb-6 overflow-hidden">
-                <img src={game.thumbnailUrl} alt="Icon" className="w-full h-full object-cover" onError={(e) => { (e.currentTarget as HTMLImageElement).src = ASSETS.PLACEHOLDER_APP; }} />
-              </div>
-              
-              <div className="space-y-4">
-                <a 
-                  href="https://play.google.com/store/apps/details?id=com.mrodr.yonunca" 
-                  target="_blank" 
-                  rel="noreferrer"
-                >
-                  <button className="w-full bg-black text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors shadow-lg cursor-pointer">
-                    <Download size={20} />
-                    Descargar Ahora
-                  </button>
-                </a>
+              {/* Logo centrado */}
+              <div className="w-24 h-24 bg-white rounded-2xl shadow-md mb-8 overflow-hidden mx-auto flex items-center justify-center">
+                <img
+                  src={game.thumbnailUrl}
+                  alt="Icon"
+                  className="w-full h-full object-cover"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).src = ASSETS.PLACEHOLDER_APP; }}
+                />
               </div>
 
+              <div className="space-y-4">
+                {/* Android / Google Play */}
+                {game.appLink ? (
+                  <a href={game.appLink} target="_blank" rel="noreferrer">
+                    <button className="w-full bg-black text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-800 transition-colors shadow-lg cursor-pointer">
+                      <FontAwesomeIcon icon={faGooglePlay} size="lg" color="#6dd099" />
+                      Descargar Android
+                    </button>
+                  </a>
+                ) : (
+                  <button disabled className="w-full bg-gray-200 text-gray-500 font-bold py-4 rounded-xl flex items-center justify-center gap-3 cursor-not-allowed shadow-lg">
+                    <FontAwesomeIcon icon={faGooglePlay} size="lg" color="#000000" />
+                    Descargar Android (Próximamente)
+                  </button>
+                )}
+
+                {/* Separación entre botones */}
+                <div className="mt-4"></div>
+
+                {/* iOS / App Store */}
+                {game.appIosLink ? (
+                  <a href={game.appIosLink} target="_blank" rel="noreferrer">
+                    <button className="w-full bg-black text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-800 transition-colors shadow-lg cursor-pointer">
+                      <FontAwesomeIcon icon={faAppStoreIos} size="lg" color="#ffffff" />
+                      Descargar iOS
+                    </button>
+                  </a>
+                ) : (
+                  <button disabled className="w-full bg-gray-200 text-gray-500 font-bold py-4 rounded-xl flex items-center justify-center gap-3 cursor-not-allowed shadow-lg">
+                    <FontAwesomeIcon icon={faAppStoreIos} size="lg" color="#000000" />
+                    Descargar iOS (Próximamente)
+                  </button>
+                )}
+              </div>
 
               <div className="mt-8 pt-8 border-t border-orange-200">
-                 <h3 className="font-bold text-gray-900 mb-4">Características</h3>
-                 <ul className="space-y-3">
-                   <li className="flex items-center text-gray-600">
-                     <Star size={16} className="text-orange-500 mr-2" /> Multijugador offline
-                   </li>
-                   <li className="flex items-center text-gray-600">
-                     <Star size={16} className="text-orange-500 mr-2" /> Modo normal y +18
-                   </li>
-                   <li className="flex items-center text-gray-600">
-                     <Star size={16} className="text-orange-500 mr-2" /> +300 frases
-                   </li>
-                 </ul>
+                <h3 className="font-bold text-gray-900 mb-4">Características</h3>
+                <ul className="space-y-3">
+                  <li className="flex items-center text-gray-600">
+                    <Star size={16} className="text-orange-500 mr-2" /> Multijugador offline
+                  </li>
+                  <li className="flex items-center text-gray-600">
+                    <Star size={16} className="text-orange-500 mr-2" /> Modo normal y +18
+                  </li>
+                  <li className="flex items-center text-gray-600">
+                    <Star size={16} className="text-orange-500 mr-2" /> +300 frases
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
