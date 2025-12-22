@@ -1,0 +1,36 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Se ejecuta en cada push a main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout del repositorio
+      - uses: actions/checkout@v3
+
+      # 2️⃣ Configurar Node.js
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # 3️⃣ Instalar dependencias
+      - name: Install dependencies
+        run: npm install
+
+      # 4️⃣ Construir el proyecto
+      - name: Build project
+        run: npm run build
+
+      # 5️⃣ Desplegar a gh-pages conservando CNAME
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v5
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build         # Carpeta generada por npm run build
+          keep_files: true             # Conserva CNAME y otros archivos importantes
