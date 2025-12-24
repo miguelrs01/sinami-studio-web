@@ -11,6 +11,7 @@ export const GameDetail: React.FC = () => {
   const game = GAMES.find(g => g.id === id);
   const isPlayMode = location.pathname.endsWith('/play');
   const playBuildUrl = id ? `/games/${id}/play/` : '';
+  const isPwaMode = `${location.pathname}${location.search}${location.hash}`.toLowerCase().includes('pwa');
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -135,17 +136,26 @@ export const GameDetail: React.FC = () => {
 
                 {/* iOS / App Store */}
                 {game.appIosLink ? (
-                  <a href={game.appIosLink} target="_blank" rel="noreferrer">
+                  <a href={isPwaMode ? playBuildUrl : game.appIosLink} target="_blank" rel="noreferrer">
                     <button className="w-full bg-black text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-800 transition-colors shadow-lg cursor-pointer">
                       <FontAwesomeIcon icon={faAppStoreIos} size="lg" color="#ffffff" />
                       Descargar iOS
                     </button>
                   </a>
                 ) : (
-                  <button disabled className="w-full bg-gray-200 text-gray-500 font-bold py-4 rounded-xl flex items-center justify-center gap-3 cursor-not-allowed shadow-lg">
-                    <FontAwesomeIcon icon={faAppStoreIos} size="lg" color="#000000" />
-                    Descargar iOS (Próximamente)
-                  </button>
+                  isPwaMode ? (
+                    <a href={playBuildUrl} target="_blank" rel="noreferrer">
+                      <button className="w-full bg-black text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-800 transition-colors shadow-lg cursor-pointer">
+                        <FontAwesomeIcon icon={faAppStoreIos} size="lg" color="#ffffff" />
+                        Descargar iOS (Próximamente)
+                      </button>
+                    </a>
+                  ) : (
+                    <button disabled className="w-full bg-gray-200 text-gray-500 font-bold py-4 rounded-xl flex items-center justify-center gap-3 cursor-not-allowed shadow-lg">
+                      <FontAwesomeIcon icon={faAppStoreIos} size="lg" color="#000000" />
+                      Descargar iOS (Próximamente)
+                    </button>
+                  )
                 )}
               </div>
 
