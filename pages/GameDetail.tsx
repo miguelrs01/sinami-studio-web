@@ -105,12 +105,12 @@ export const GameDetail: React.FC = () => {
 
               {!isPlayMode && (
                 <div className="mb-6">
-                  <Link to={`/games/${game.id}/play`} className="block">
+                  <a href={playBuildUrl} target="_blank" rel="noreferrer" className="block">
                     <button className="w-full bg-orange-500 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-orange-600 transition-colors shadow-lg cursor-pointer">
                       <ExternalLink size={18} />
                       Jugar en web
                     </button>
-                  </Link>
+                  </a>
                 </div>
               )}
 
