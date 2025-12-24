@@ -31,7 +31,7 @@ export const GAMES: Game[] = [
     platform: "Mobile",
     status: "Released",
     appLink: "https://play.google.com/store/apps/details?id=com.mrodr.yonunca",
-    appIosLink: "PWA"
+    appIosLink: "games/yo-nunca/play/"
   }
 ];
 
