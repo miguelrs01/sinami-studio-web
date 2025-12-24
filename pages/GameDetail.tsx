@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { ArrowLeft, ExternalLink, Download, Star } from 'lucide-react';
 import { GAMES, ASSETS } from '../constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -7,7 +7,10 @@ import { faGooglePlay, faAppStoreIos } from '@fortawesome/free-brands-svg-icons'
 
 export const GameDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
   const game = GAMES.find(g => g.id === id);
+  const isPlayMode = location.pathname.endsWith('/play');
+  const playBuildUrl = id ? `/games/${id}/play/` : '';
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -51,29 +54,42 @@ export const GameDetail: React.FC = () => {
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          
-      <div className="lg:col-span-2">
-        <h2 className="text-3xl font-bold text-gray-900 mb-6">Sobre el juego</h2>
-        <p className="text-xl text-gray-600 leading-relaxed mb-8">
-          {game.longDescription}
-        </p>
-        
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
-          {/* Screenshots en formato móvil */}
-          <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
-            <img src="https://play-lh.googleusercontent.com/9SNvkbT9RuCyEmKKgfv0873unHH8TdIWtQa4fJdRpmVan17IsjjX1Vi5RgUQf3Fj1tdhH8NiU0nHGkTapWcXEA=w1052-h592-rw" alt="Gameplay 1" className="w-full h-full object-cover" />
-          </div>
-          <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
-            <img src="https://play-lh.googleusercontent.com/0w_dDHNLZ8t0EzJekQ4SvDWwQq2TaUnYJFSkx0ipXXD75iz89leo5VvAcGsxV_cuYZ0_k9PBbeS8twDhB3Y6=w1052-h592-rw" alt="Gameplay 2" className="w-full h-full object-cover" />
-          </div>
-          <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
-            <img src="https://play-lh.googleusercontent.com/kisN7RMqEOb833h8lPrfjRg14WMt5DhIKnMnyhfe6r6pMhIJQuwaNygG7sOZ0i6iqAPfxiHAYrq2uzV7yh_SkA=w1052-h592-rw" alt="Gameplay 3" className="w-full h-full object-cover" />
-          </div>
-          <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
-            <img src="https://play-lh.googleusercontent.com/losq93-h_gKudEY2o68L9zHtcJCz7X7zAybaAteTpPjgSN6S-zwbV5movUJ2DhKIQP3URDegj_vep0GeVOWCFg=w1052-h592-rw" alt="Gameplay 4" className="w-full h-full object-cover" />
-          </div>
-        </div>
-      </div>
+          {isPlayMode ? (
+            <div className="lg:col-span-2">
+              <div className="w-full overflow-hidden rounded-2xl border border-orange-100 shadow-sm bg-white">
+                <iframe
+                  src={playBuildUrl}
+                  title={`${game.title} - Web`}
+                  className="w-full h-[75vh]"
+                  allowFullScreen
+                  loading="lazy"
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="lg:col-span-2">
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">Sobre el juego</h2>
+              <p className="text-xl text-gray-600 leading-relaxed mb-8">
+                {game.longDescription}
+              </p>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
+                {/* Screenshots en formato móvil */}
+                <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
+                  <img src="https://play-lh.googleusercontent.com/9SNvkbT9RuCyEmKKgfv0873unHH8TdIWtQa4fJdRpmVan17IsjjX1Vi5RgUQf3Fj1tdhH8NiU0nHGkTapWcXEA=w1052-h592-rw" alt="Gameplay 1" className="w-full h-full object-cover" />
+                </div>
+                <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
+                  <img src="https://play-lh.googleusercontent.com/0w_dDHNLZ8t0EzJekQ4SvDWwQq2TaUnYJFSkx0ipXXD75iz89leo5VvAcGsxV_cuYZ0_k9PBbeS8twDhB3Y6=w1052-h592-rw" alt="Gameplay 2" className="w-full h-full object-cover" />
+                </div>
+                <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
+                  <img src="https://play-lh.googleusercontent.com/kisN7RMqEOb833h8lPrfjRg14WMt5DhIKnMnyhfe6r6pMhIJQuwaNygG7sOZ0i6iqAPfxiHAYrq2uzV7yh_SkA=w1052-h592-rw" alt="Gameplay 3" className="w-full h-full object-cover" />
+                </div>
+                <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
+                  <img src="https://play-lh.googleusercontent.com/losq93-h_gKudEY2o68L9zHtcJCz7X7zAybaAteTpPjgSN6S-zwbV5movUJ2DhKIQP3URDegj_vep0GeVOWCFg=w1052-h592-rw" alt="Gameplay 4" className="w-full h-full object-cover" />
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="lg:col-span-1">
             <div className="bg-orange-50 rounded-2xl p-8 sticky top-24 shadow-sm border border-orange-100">
@@ -86,6 +102,17 @@ export const GameDetail: React.FC = () => {
                   onError={(e) => { (e.currentTarget as HTMLImageElement).src = ASSETS.PLACEHOLDER_APP; }}
                 />
               </div>
+
+              {!isPlayMode && (
+                <div className="mb-6">
+                  <Link to={`/games/${game.id}/play`} className="block">
+                    <button className="w-full bg-orange-500 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-orange-600 transition-colors shadow-lg cursor-pointer">
+                      <ExternalLink size={18} />
+                      Jugar en web
+                    </button>
+                  </Link>
+                </div>
+              )}
 
               <div className="space-y-4">
                 {/* Android / Google Play */}
