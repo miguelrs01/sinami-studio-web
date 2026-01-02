@@ -3,12 +3,6 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 
-const fullHash = window.location.hash || '';
-if (fullHash.startsWith('#/')) {
-  const newPath = fullHash.slice(1);
-  window.history.replaceState(null, '', newPath);
-}
-
 const googleSiteVerification = import.meta.env.VITE_GOOGLE_SITE_VERIFICATION;
 if (googleSiteVerification) {
   const meta = document.createElement('meta');
