@@ -67,12 +67,12 @@ export const TEAM: TeamMember[] = [
     name: "Miguel R.",
     role: "Co-Fundador & Desarrollador",
     bio: "Ingeniería y lógica. El encargado de que todo funcione suavemente y sin bugs.",
-    avatarUrl: `${BASE_URL}assets/team-miguel.png`
+    avatarUrl: `${BASE_URL}assets/avatar_miguel.png`
   },
   {
     name: "Nadia N.",
     role: "Co-Fundadora & Artista",
     bio: "Co-Fundadora y diseño visual. La mente detrás de la estética única de nuestras aplicaciones.",
-    avatarUrl: `${BASE_URL}assets/team-nadia.png`
+    avatarUrl: `${BASE_URL}assets/avatar_nadia.png`
   }
 ];
