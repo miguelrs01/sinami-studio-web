@@ -32,7 +32,7 @@ export const APPS: App[] = [
     status: "Released",
     appLink: "https://play.google.com/store/apps/details?id=com.mrodr.yonunca", // Android
     appIosLink: "",
-    appWebLink: "https://sinamistudio.com/apps/yo-nunca/play", // Web
+    appWebLink: "https://sinamistudio.com/apps/yo-nunca/play/", // Web
     comingSoon: false
   },
     {

@@ -91,57 +91,59 @@ export const AppDetail: React.FC = () => {
                 />
               </div>
 
-              {isPlayMode && (
+              {app.appWebLink && (
                 <div className="mb-6">
-                  <a href={playBuildUrl} target="_blank" rel="noreferrer" className="block">
-                    <button className="w-full bg-orange-500 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-orange-600 transition-colors shadow-lg cursor-pointer">
+                  {app.appWebLink === "proximamente" ? (
+                    <button disabled className="w-full bg-gray-200 text-gray-500 font-bold py-4 rounded-xl flex items-center justify-center gap-3 cursor-not-allowed shadow-lg">
                       <ExternalLink size={18} />
-                      Jugar en web
+                      Jugar en web (Próximamente)
                     </button>
-                  </a>
+                  ) : (
+                    <a href={app.appWebLink} target="_blank" rel="noreferrer" className="block">
+                      <button className="w-full bg-orange-500 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-orange-600 transition-colors shadow-lg cursor-pointer">
+                        <ExternalLink size={18} />
+                        Jugar en web
+                      </button>
+                    </a>
+                  )}
                 </div>
               )}
 
               <div className="space-y-4">
                 {/* Android / Google Play */}
-                {app.appLink ? (
-                  <a href={app.appLink} target="_blank" rel="noreferrer">
-                    <button className="w-full bg-black text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-800 transition-colors shadow-lg cursor-pointer">
-                      <FontAwesomeIcon icon={faGooglePlay} size="lg" color="#6dd099" />
-                      Descargar Android
+                {app.appLink && (
+                  app.appLink === "proximamente" ? (
+                    <button disabled className="w-full bg-gray-200 text-gray-500 font-bold py-4 rounded-xl flex items-center justify-center gap-3 cursor-not-allowed shadow-lg">
+                      <FontAwesomeIcon icon={faGooglePlay} size="lg" color="#000000" />
+                      Descargar Android (Próximamente)
                     </button>
-                  </a>
-                ) : (
-                  <button disabled className="w-full bg-gray-200 text-gray-500 font-bold py-4 rounded-xl flex items-center justify-center gap-3 cursor-not-allowed shadow-lg">
-                    <FontAwesomeIcon icon={faGooglePlay} size="lg" color="#000000" />
-                    Descargar Android (Próximamente)
-                  </button>
+                  ) : (
+                    <a href={app.appLink} target="_blank" rel="noreferrer">
+                      <button className="w-full bg-black text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-800 transition-colors shadow-lg cursor-pointer">
+                        <FontAwesomeIcon icon={faGooglePlay} size="lg" color="#6dd099" />
+                        Descargar Android
+                      </button>
+                    </a>
+                  )
                 )}
 
                 {/* Separación entre botones */}
                 <div className="mt-4"></div>
 
                 {/* iOS / App Store */}
-                {app.appIosLink ? (
-                  <a href={app.appIosLink} target="_blank" rel="noreferrer">
-                    <button className="w-full bg-black text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-800 transition-colors shadow-lg cursor-pointer">
-                      <FontAwesomeIcon icon={faAppStoreIos} size="lg" color="#ffffff" />
-                      Descargar iOS
-                    </button>
-                  </a>
-                ) : (
-                  isPwaMode ? (
-                    <a href={playBuildUrl} target="_blank" rel="noreferrer">
-                      <button className="w-full bg-black text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-800 transition-colors shadow-lg cursor-pointer">
-                        <FontAwesomeIcon icon={faAppStoreIos} size="lg" color="#ffffff" />
-                        Descargar iOS (Próximamente)
-                      </button>
-                    </a>
-                  ) : (
+                {app.appIosLink && (
+                  app.appIosLink === "proximamente" ? (
                     <button disabled className="w-full bg-gray-200 text-gray-500 font-bold py-4 rounded-xl flex items-center justify-center gap-3 cursor-not-allowed shadow-lg">
                       <FontAwesomeIcon icon={faAppStoreIos} size="lg" color="#000000" />
                       Descargar iOS (Próximamente)
                     </button>
+                  ) : (
+                    <a href={app.appIosLink} target="_blank" rel="noreferrer">
+                      <button className="w-full bg-black text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-800 transition-colors shadow-lg cursor-pointer">
+                        <FontAwesomeIcon icon={faAppStoreIos} size="lg" color="#ffffff" />
+                        Descargar iOS
+                      </button>
+                    </a>
                   )
                 )}
               </div>
