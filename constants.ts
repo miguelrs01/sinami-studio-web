@@ -49,7 +49,7 @@ export const APPS: App[] = [
     appWebLink: "", // Web
     comingSoon: true
   },
-    {
+  {
     id: "housezen",
     title: "HouseZen",
     description: "Organizador de tareas compartidas del hogar.",
@@ -61,6 +61,8 @@ export const APPS: App[] = [
     appLink: "", // Android
     appIosLink: "",
     appWebLink: "", // Web
+    comingSoon: true
+  }
 ];
 
 export const TEAM: TeamMember[] = [
