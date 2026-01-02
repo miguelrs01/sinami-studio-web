@@ -65,7 +65,7 @@ export const About: React.FC = () => {
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Arte con Alma</h3>
                 <p className="text-gray-600">
-                  Nuestros diseños buscan evocar calidez y alegría. Queremos que nuestros juegos se sientan como un abrazo virtual.
+                  Nuestros diseños buscan evocar calidez y alegría. Queremos que nuestras aplicaciones se sientan como un abrazo virtual.
                 </p>
               </div>
             </div>

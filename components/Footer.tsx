@@ -28,9 +28,9 @@ export const Footer: React.FC = () => {
           </div>
 
           <div className="col-span-1">
-            <h4 className="text-lg font-bold mb-4 text-orange-400">Juegos</h4>
+            <h4 className="text-lg font-bold mb-4 text-orange-400">Apps</h4>
             <ul className="space-y-2 text-gray-400">
-              <li><Link to="/games" className="hover:text-white transition-colors">Yo Nunca</Link></li>
+              <li><Link to="/apps" className="hover:text-white transition-colors">Yo Nunca</Link></li>
             </ul>
           </div>
 

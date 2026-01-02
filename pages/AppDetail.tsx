@@ -1,23 +1,19 @@
 import React, { useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { ArrowLeft, ExternalLink, Download, Star } from 'lucide-react';
-import { GAMES, ASSETS } from '../constants';
+import { APPS, ASSETS } from '../constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGooglePlay, faAppStoreIos } from '@fortawesome/free-brands-svg-icons';
 
-export const GameDetail: React.FC = () => {
+export const AppDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const location = useLocation();
-  const game = GAMES.find(g => g.id === id);
-  const isPlayMode = location.pathname.endsWith('/play');
-  const playBuildUrl = id ? `/games/${id}/play/` : '';
-  const isPwaMode = `${location.pathname}${location.search}${location.hash}`.toLowerCase().includes('pwa');
+  const app = APPS.find(g => g.id === id);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
 
-  if (!game) {
+  if (!app) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-orange-50">
         <div className="text-center">
@@ -31,10 +27,10 @@ export const GameDetail: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Header for Game */}
+      {/* Hero Header for App */}
       <div className="relative h-[40vh] md:h-[50vh] w-full bg-gray-900 overflow-hidden">
         <div className="absolute inset-0 opacity-60">
-            <img src={game.heroUrl} alt={game.title} className="w-full h-full object-cover" onError={(e) => { (e.currentTarget as HTMLImageElement).src = ASSETS.FALLBACK_BANNER; }} />
+            <img src={app.heroUrl} alt={app.title} className="w-full h-full object-cover" onError={(e) => { (e.currentTarget as HTMLImageElement).src = ASSETS.FALLBACK_BANNER; }} />
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>
         
@@ -43,10 +39,10 @@ export const GameDetail: React.FC = () => {
              <Link to="/" className="inline-flex items-center text-white/80 hover:text-white mb-6 transition-colors">
                 <ArrowLeft className="mr-2" /> Volver al estudio
              </Link>
-             <h1 className="text-5xl md:text-7xl font-black text-white mb-4 shadow-sm">{game.title}</h1>
+             <h1 className="text-5xl md:text-7xl font-black text-white mb-4 shadow-sm">{app.title}</h1>
              <div className="flex items-center gap-4 text-white/90 font-medium">
-                <span className="bg-orange-500 px-3 py-1 rounded-md">{game.platform}</span>
-                <span>{game.status}</span>
+                <span className="bg-orange-500 px-3 py-1 rounded-md">{app.platform}</span>
+                <span>{app.status}</span>
              </div>
           </div>
         </div>
@@ -55,49 +51,36 @@ export const GameDetail: React.FC = () => {
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {isPlayMode ? (
-            <div className="lg:col-span-2">
-              <div className="w-full overflow-hidden rounded-2xl border border-orange-100 shadow-sm bg-white">
-                <iframe
-                  src={playBuildUrl}
-                  title={`${game.title} - Web`}
-                  className="w-full h-[75vh]"
-                  allowFullScreen
-                  loading="lazy"
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="lg:col-span-2">
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">Sobre el juego</h2>
-              <p className="text-xl text-gray-600 leading-relaxed mb-8">
-                {game.longDescription}
-              </p>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
-                {/* Screenshots en formato móvil */}
-                <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
-                  <img src="https://play-lh.googleusercontent.com/9SNvkbT9RuCyEmKKgfv0873unHH8TdIWtQa4fJdRpmVan17IsjjX1Vi5RgUQf3Fj1tdhH8NiU0nHGkTapWcXEA=w1052-h592-rw" alt="Gameplay 1" className="w-full h-full object-cover" />
-                </div>
-                <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
-                  <img src="https://play-lh.googleusercontent.com/0w_dDHNLZ8t0EzJekQ4SvDWwQq2TaUnYJFSkx0ipXXD75iz89leo5VvAcGsxV_cuYZ0_k9PBbeS8twDhB3Y6=w1052-h592-rw" alt="Gameplay 2" className="w-full h-full object-cover" />
-                </div>
-                <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
-                  <img src="https://play-lh.googleusercontent.com/kisN7RMqEOb833h8lPrfjRg14WMt5DhIKnMnyhfe6r6pMhIJQuwaNygG7sOZ0i6iqAPfxiHAYrq2uzV7yh_SkA=w1052-h592-rw" alt="Gameplay 3" className="w-full h-full object-cover" />
-                </div>
-                <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
-                  <img src="https://play-lh.googleusercontent.com/losq93-h_gKudEY2o68L9zHtcJCz7X7zAybaAteTpPjgSN6S-zwbV5movUJ2DhKIQP3URDegj_vep0GeVOWCFg=w1052-h592-rw" alt="Gameplay 4" className="w-full h-full object-cover" />
-                </div>
-              </div>
-            </div>
-          )}
+          
+      <div className="lg:col-span-2">
+        <h2 className="text-3xl font-bold text-gray-900 mb-6">Sobre el juego</h2>
+        <p className="text-xl text-gray-600 leading-relaxed mb-8">
+          {app.longDescription}
+        </p>
+        
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
+          {/* Screenshots en formato móvil */}
+          <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
+            <img src="https://play-lh.googleusercontent.com/9SNvkbT9RuCyEmKKgfv0873unHH8TdIWtQa4fJdRpmVan17IsjjX1Vi5RgUQf3Fj1tdhH8NiU0nHGkTapWcXEA=w1052-h592-rw" alt="Appplay 1" className="w-full h-full object-cover" />
+          </div>
+          <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
+            <img src="https://play-lh.googleusercontent.com/0w_dDHNLZ8t0EzJekQ4SvDWwQq2TaUnYJFSkx0ipXXD75iz89leo5VvAcGsxV_cuYZ0_k9PBbeS8twDhB3Y6=w1052-h592-rw" alt="Appplay 2" className="w-full h-full object-cover" />
+          </div>
+          <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
+            <img src="https://play-lh.googleusercontent.com/kisN7RMqEOb833h8lPrfjRg14WMt5DhIKnMnyhfe6r6pMhIJQuwaNygG7sOZ0i6iqAPfxiHAYrq2uzV7yh_SkA=w1052-h592-rw" alt="Appplay 3" className="w-full h-full object-cover" />
+          </div>
+          <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
+            <img src="https://play-lh.googleusercontent.com/losq93-h_gKudEY2o68L9zHtcJCz7X7zAybaAteTpPjgSN6S-zwbV5movUJ2DhKIQP3URDegj_vep0GeVOWCFg=w1052-h592-rw" alt="Appplay 4" className="w-full h-full object-cover" />
+          </div>
+        </div>
+      </div>
 
           <div className="lg:col-span-1">
             <div className="bg-orange-50 rounded-2xl p-8 sticky top-24 shadow-sm border border-orange-100">
               {/* Logo centrado */}
               <div className="w-24 h-24 bg-white rounded-2xl shadow-md mb-8 overflow-hidden mx-auto flex items-center justify-center">
                 <img
-                  src={game.thumbnailUrl}
+                  src={app.thumbnailUrl}
                   alt="Icon"
                   className="w-full h-full object-cover"
                   onError={(e) => { (e.currentTarget as HTMLImageElement).src = ASSETS.PLACEHOLDER_APP; }}
@@ -117,8 +100,8 @@ export const GameDetail: React.FC = () => {
 
               <div className="space-y-4">
                 {/* Android / Google Play */}
-                {game.appLink ? (
-                  <a href={game.appLink} target="_blank" rel="noreferrer">
+                {app.appLink ? (
+                  <a href={app.appLink} target="_blank" rel="noreferrer">
                     <button className="w-full bg-black text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-800 transition-colors shadow-lg cursor-pointer">
                       <FontAwesomeIcon icon={faGooglePlay} size="lg" color="#6dd099" />
                       Descargar Android
@@ -135,8 +118,8 @@ export const GameDetail: React.FC = () => {
                 <div className="mt-4"></div>
 
                 {/* iOS / App Store */}
-                {game.appIosLink ? (
-                  <a href={isPwaMode ? playBuildUrl : game.appIosLink} target="_blank" rel="noreferrer">
+                {app.appIosLink ? (
+                  <a href={app.appIosLink} target="_blank" rel="noreferrer">
                     <button className="w-full bg-black text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-800 transition-colors shadow-lg cursor-pointer">
                       <FontAwesomeIcon icon={faAppStoreIos} size="lg" color="#ffffff" />
                       Descargar iOS

@@ -33,8 +33,8 @@ export const Hero: React.FC = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="#games" className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-white bg-orange-500 hover:bg-orange-600 transition-all shadow-lg hover:shadow-orange-500/30">
-              Ver Nuestros Juegos
+            <a href="#apps" className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-white bg-orange-500 hover:bg-orange-600 transition-all shadow-lg hover:shadow-orange-500/30">
+              Ver Nuestras aplicaciones
               <ArrowRight className="ml-2 -mr-1" size={20} />
             </a>
             <a href="#about" className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-full text-orange-600 bg-white border-2 border-orange-100 hover:border-orange-200 hover:bg-orange-50 transition-all shadow-md">

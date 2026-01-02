@@ -9,7 +9,7 @@ export const Navbar: React.FC = () => {
 
   const navLinks = [
     { name: 'Inicio', path: '/' },
-    { name: 'Juegos', path: '/games' },
+    { name: 'Apps', path: '/apps' },
     { name: 'Nosotros', path: '/about' },
     { name: 'Contacto', path: '/contact' },
   ];

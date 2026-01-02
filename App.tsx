@@ -3,10 +3,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { Home } from './pages/Home';
-import { GameDetail } from './pages/GameDetail';
+import { AppDetail } from './pages/AppDetail';
 import { Contact } from './pages/Contact';
 import { AboutPage } from './pages/AboutPage';
-import { GamesPage } from './pages/GamesPage';
+import { AppsPage } from './pages/AppsPage';
 
 function App() {
   return (
@@ -16,9 +16,8 @@ function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/games" element={<GamesPage />} />
-            <Route path="/games/:id/play" element={<GameDetail />} />
-            <Route path="/games/:id" element={<GameDetail />} />
+            <Route path="/apps" element={<AppsPage />} />
+            <Route path="/apps/:id" element={<AppDetail />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<Contact />} />
             {/* Catch all */}

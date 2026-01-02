@@ -1,8 +1,8 @@
 import React from 'react';
 import { Hero } from '../components/Hero';
-import { GameCard } from '../components/GameCard';
+import { AppCard } from '../components/AppCard';
 import { About } from '../components/About';
-import { GAMES } from '../constants';
+import { APPS } from '../constants';
 import { Sparkles } from 'lucide-react';
 
 export const Home: React.FC = () => {
@@ -10,25 +10,22 @@ export const Home: React.FC = () => {
     <div className="flex flex-col min-h-screen">
       <Hero />
       
-      {/* Games Grid Section */}
-      <section id="games" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+      {/* Apps Grid Section */}
+      <section id="apps" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="text-center mb-12">
           <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-100 text-orange-700 font-bold text-sm uppercase tracking-wide mb-4">
             <Sparkles size={16} />
             Nuestros Proyectos
           </span>
           <h2 className="text-4xl md:text-5xl font-black text-gray-900">
-            Biblioteca de juegos
+            Biblioteca de aplicaciones
           </h2>
         </div>
         
-        {/* Centered grid for single game */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-center">
-          {/* Using empty divs to center the single card if needed, or just flex-center via CSS class */}
-          {GAMES.map((game) => (
-             <div key={game.id} className="md:col-start-1 lg:col-start-2"> 
-                <GameCard game={game} />
-             </div>
+        {/* Centered grid for single app */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {APPS.map((app) => (
+            <AppCard key={app.id} app={app} />
           ))}
         </div>
       </section>
