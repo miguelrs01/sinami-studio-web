@@ -9,8 +9,9 @@ export interface App {
   heroUrl: string; // Used for the detail page
   platform: Platform[];
   status: 'Released' | 'In Development' | 'Beta';
-  appLink?: string; // Link to play or download
+  appLink?: string; // Link to play or download (Android)
   appIosLink?: string; // Link to play or download on IOS
+  appWebLink?: string; // Link to play or download on Web
   comingSoon?: boolean;
 }
 

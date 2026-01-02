@@ -9,6 +9,10 @@ export const AppDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const app = APPS.find(g => g.id === id);
 
+  const isPlayMode = app?.platform.includes('Web');
+  const playBuildUrl = app?.appWebLink;
+  const isPwaMode = false;
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
@@ -87,7 +91,7 @@ export const AppDetail: React.FC = () => {
                 />
               </div>
 
-              {!isPlayMode && (
+              {isPlayMode && (
                 <div className="mb-6">
                   <a href={playBuildUrl} target="_blank" rel="noreferrer" className="block">
                     <button className="w-full bg-orange-500 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-orange-600 transition-colors shadow-lg cursor-pointer">

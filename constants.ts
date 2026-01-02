@@ -30,8 +30,9 @@ export const APPS: App[] = [
     heroUrl: `https://play-lh.googleusercontent.com/_4ACHU0CaAC0Isw-q9aMUQMs3dBCec-JstegoKjKHs4eMdsbgcgMMWoXr-mK1jsG0R7o4_z5SLVyGiH-wk1d7_g=w480-h960`,
     platform: ["Android", "Web"],
     status: "Released",
-    appLink: "https://play.google.com/store/apps/details?id=com.mrodr.yonunca",
+    appLink: "https://play.google.com/store/apps/details?id=com.mrodr.yonunca", // Android
     appIosLink: "",
+    appWebLink: "https://sinamistudio.com/apps/yo-nunca/play", // Web
     comingSoon: false
   },
     {
@@ -43,8 +44,9 @@ export const APPS: App[] = [
     heroUrl: ``,
     platform: ["Android", "iOS"],
     status: "In Development",
-    appLink: "",
+    appLink: "", // Android
     appIosLink: "",
+    appWebLink: "", // Web
     comingSoon: true
   },
     {
@@ -56,10 +58,9 @@ export const APPS: App[] = [
     heroUrl: ``,
     platform: ["Android", "iOS", "Web"],
     status: "In Development",
-    appLink: "",
+    appLink: "", // Android
     appIosLink: "",
-    comingSoon: true
-  }
+    appWebLink: "", // Web
 ];
 
 export const TEAM: TeamMember[] = [
