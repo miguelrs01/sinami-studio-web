@@ -7,6 +7,7 @@ export interface App {
   longDescription: string;
   thumbnailUrl: string; // Used for the card
   heroUrl: string; // Used for the detail page
+  screenshots?: string[]; // Multiple app captures/screenshots
   platform: Platform[];
   status: 'Released' | 'In Development' | 'Beta';
   appLink?: string; // Link to play or download (Android)

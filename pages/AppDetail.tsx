@@ -62,21 +62,27 @@ export const AppDetail: React.FC = () => {
           {app.longDescription}
         </p>
         
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
-          {/* Screenshots en formato móvil */}
-          <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
-            <img src="https://play-lh.googleusercontent.com/9SNvkbT9RuCyEmKKgfv0873unHH8TdIWtQa4fJdRpmVan17IsjjX1Vi5RgUQf3Fj1tdhH8NiU0nHGkTapWcXEA=w1052-h592-rw" alt="Appplay 1" className="w-full h-full object-cover" />
+        {app.screenshots && app.screenshots.length > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
+            {/* Screenshots renderizados a partir de constants.ts */}
+            {app.screenshots.map((src, index) => (
+              <div
+                key={index}
+                className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md"
+              >
+                <img
+                  src={src}
+                  alt={`${app.title} screenshot ${index + 1}`}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = ASSETS.PLACEHOLDER_APP;
+                  }}
+                />
+              </div>
+            ))}
           </div>
-          <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
-            <img src="https://play-lh.googleusercontent.com/0w_dDHNLZ8t0EzJekQ4SvDWwQq2TaUnYJFSkx0ipXXD75iz89leo5VvAcGsxV_cuYZ0_k9PBbeS8twDhB3Y6=w1052-h592-rw" alt="Appplay 2" className="w-full h-full object-cover" />
-          </div>
-          <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
-            <img src="https://play-lh.googleusercontent.com/kisN7RMqEOb833h8lPrfjRg14WMt5DhIKnMnyhfe6r6pMhIJQuwaNygG7sOZ0i6iqAPfxiHAYrq2uzV7yh_SkA=w1052-h592-rw" alt="Appplay 3" className="w-full h-full object-cover" />
-          </div>
-          <div className="aspect-[9/16] bg-gray-100 rounded-xl overflow-hidden shadow-md">
-            <img src="https://play-lh.googleusercontent.com/losq93-h_gKudEY2o68L9zHtcJCz7X7zAybaAteTpPjgSN6S-zwbV5movUJ2DhKIQP3URDegj_vep0GeVOWCFg=w1052-h592-rw" alt="Appplay 4" className="w-full h-full object-cover" />
-          </div>
-        </div>
+        )}
+
       </div>
 
           <div className="lg:col-span-1">
