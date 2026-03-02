@@ -40,14 +40,14 @@ export const APPS: App[] = [
     title: "¿Lo digo?",
     description: "El juego para saber que opinan tus amigos sobre tí.",
     longDescription: "¿Crees saber como te ven tus amigos? Descubre la realidad jugando a nuestro nuevo juego '¿Lo digo?' donde tus amigos y tú podreís confesar que es lo que opinais unos de otros, romped el hielo y aventuraros a pasar un buen rato juntos.",
-    thumbnailUrl: ``, 
-    heroUrl: ``,
+    thumbnailUrl: `https://play-lh.googleusercontent.com/eSnNX6V5QlSzusqv96ffq8El43qSF1Ii1tjJvyIdtq40e-oYa_qSz0nZsVh3hSY-a7GvNCj5uqhgNcO951AfuQ=w240-h480-rw`, 
+    heroUrl: `https://play-lh.googleusercontent.com/eSnNX6V5QlSzusqv96ffq8El43qSF1Ii1tjJvyIdtq40e-oYa_qSz0nZsVh3hSY-a7GvNCj5uqhgNcO951AfuQ=w240-h480-rw`,
     platform: ["Android", "iOS"],
-    status: "In Development",
-    appLink: "", // Android
-    appIosLink: "",
+    status: "Released",
+    appLink: "https://play.google.com/store/apps/details?id=com.sinami.lodigo", // Android
+    appIosLink: "https://apps.apple.com/us/app/lo-digo/id6757181330",
     appWebLink: "", // Web
-    comingSoon: true
+    comingSoon: false
   },
   {
     id: "housezen",
