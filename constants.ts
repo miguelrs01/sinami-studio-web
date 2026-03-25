@@ -29,16 +29,16 @@ export const APPS: App[] = [
     thumbnailUrl: `https://play-lh.googleusercontent.com/_4ACHU0CaAC0Isw-q9aMUQMs3dBCec-JstegoKjKHs4eMdsbgcgMMWoXr-mK1jsG0R7o4_z5SLVyGiH-wk1d7_g=w480-h960`, 
     heroUrl: `https://play-lh.googleusercontent.com/_4ACHU0CaAC0Isw-q9aMUQMs3dBCec-JstegoKjKHs4eMdsbgcgMMWoXr-mK1jsG0R7o4_z5SLVyGiH-wk1d7_g=w480-h960`,
     screenshots: [
+      `https://play-lh.googleusercontent.com/9SNvkbT9RuCyEmKKgfv0873unHH8TdIWtQa4fJdRpmVan17IsjjX1Vi5RgUQf3Fj1tdhH8NiU0nHGkTapWcXEA=w1052-h592-rw`,
       `https://play-lh.googleusercontent.com/0w_dDHNLZ8t0EzJekQ4SvDWwQq2TaUnYJFSkx0ipXXD75iz89leo5VvAcGsxV_cuYZ0_k9PBbeS8twDhB3Y6=w1052-h592-rw`,
-      `https://play-lh.googleusercontent.com/_4ACHU0CaAC0Isw-q9aMUQMs3dBCec-JstegoKjKHs4eMdsbgcgMMWoXr-mK1jsG0R7o4_z5SLVyGiH-wk1d7_g=w480-h960`,
-      `https://play-lh.googleusercontent.com/eSnNX6V5QlSzusqv96ffq8El43qSF1Ii1tjJvyIdtq40e-oYa_qSz0nZsVh3hSY-a7GvNCj5uqhgNcO951AfuQ=w240-h480-rw`,
-      `https://play-lh.googleusercontent.com/eSnNX6V5QlSzusqv96ffq8El43qSF1Ii1tjJvyIdtq40e-oYa_qSz0nZsVh3hSY-a7GvNCj5uqhgNcO951AfuQ=w480-h960`
+      `https://play-lh.googleusercontent.com/kisN7RMqEOb833h8lPrfjRg14WMt5DhIKnMnyhfe6r6pMhIJQuwaNygG7sOZ0i6iqAPfxiHAYrq2uzV7yh_SkA=w1052-h592-rw`,
+      `https://play-lh.googleusercontent.com/losq93-h_gKudEY2o68L9zHtcJCz7X7zAybaAteTpPjgSN6S-zwbV5movUJ2DhKIQP3URDegj_vep0GeVOWCFg=w1052-h592-rw`
     ],
     platform: ["Android", "Web"],
     status: "Released",
     appLink: "https://play.google.com/store/apps/details?id=com.mrodr.yonunca", // Android
     appIosLink: "",
-    appWebLink: "https://sinamistudio.com/apps/yo-nunca/play/", // Web
+    appWebLink: "https://sinamistudio.com/apps/yo-nunca/play-party/", // Web
     comingSoon: false
   },
     {

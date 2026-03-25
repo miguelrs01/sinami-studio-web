@@ -8,7 +8,7 @@
     "build": "vite build",
     "postbuild": "node -e \"require('fs').copyFileSync('dist/index.html','dist/404.html')\"",
     "preview": "vite preview",
-    "predeploy": "npm run build && cp CNAME dist/",
+    "predeploy": "npm run build && node scripts/prepare-deploy.cjs",
     "deploy": "gh-pages -d dist --dotfiles"
   },
   "dependencies": {
