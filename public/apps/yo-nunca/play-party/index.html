@@ -1,0 +1,940 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Yo Nunca - Modo Party</title>
+  <meta name="description" content="Unete a una sala Party Online con codigo y juega desde tu navegador." />
+  <style>
+    :root {
+      --bg: #060a16;
+      --text: #edf3ff;
+      --muted: #9fb2d9;
+      --card: #0f172a;
+      --card-2: #1e293b;
+      --border: #334155;
+      --accent: #06b6d4;
+      --accent-2: #38bdf8;
+      --danger: #ef4444;
+      --ok: #48d871;
+      --warn: #f7be5c;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 0% -10%, #17356c 0%, transparent 55%),
+        radial-gradient(1200px 580px at 100% 0%, #39206d 0%, transparent 48%),
+        radial-gradient(700px 340px at 50% 100%, #0b4c5f 0%, transparent 65%),
+        var(--bg);
+    }
+
+    .wrap {
+      width: min(980px, 100%);
+      margin: 0 auto;
+      padding: 20px 16px 56px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
+      box-shadow: 0 12px 42px rgba(0,0,0,.3);
+      backdrop-filter: blur(8px);
+      padding: 16px;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      letter-spacing: .02em;
+      color: #e2f3ff;
+    }
+
+    .sub {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.45;
+      max-width: 70ch;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .join-grid {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .muted { color: var(--muted); }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      letter-spacing: .15em;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #0b1324;
+      color: var(--text);
+      padding: 12px 14px;
+      font-size: 1.15rem;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--accent-2);
+      box-shadow: 0 0 0 3px rgba(56,189,248,.2);
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: #fff;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .08s ease, opacity .2s ease, filter .2s ease;
+    }
+
+    button:hover { filter: brightness(1.08); }
+    button:active { transform: translateY(1px); }
+    button[disabled] { opacity: .45; cursor: not-allowed; }
+
+    .btn-main { background: linear-gradient(90deg, #06b6d4, #3b82f6); }
+    .btn-danger { background: linear-gradient(90deg, #ef4444, #f43f5e); }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #0f1a33;
+      color: var(--muted);
+      padding: 6px 10px;
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .01em;
+    }
+
+    .pill.ok {
+      color: #b8ffd0;
+      border-color: rgba(72,216,113,.45);
+      background: rgba(72,216,113,.12);
+    }
+
+    .pill.warn {
+      color: #ffe2ad;
+      border-color: rgba(247,190,92,.45);
+      background: rgba(247,190,92,.12);
+    }
+
+    .pill.danger {
+      color: #ffc3cb;
+      border-color: rgba(255,93,108,.45);
+      background: rgba(255,93,108,.12);
+    }
+
+    .status-line {
+      margin-top: 8px;
+      min-height: 1.35em;
+      font-size: .95rem;
+    }
+
+    .panel {
+      display: grid;
+      gap: 14px;
+    }
+
+    .big-question {
+      font-size: clamp(1.1rem, 3.2vw, 1.45rem);
+      line-height: 1.35;
+      margin: 8px 0 16px;
+      font-weight: 800;
+    }
+
+    .question-prefix {
+      margin-top: 8px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      color: #22d3ee;
+      text-transform: uppercase;
+      font-size: .9rem;
+    }
+
+    .vote-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: 1fr;
+    }
+
+    .vote-yes { background: linear-gradient(90deg, #ff5f76, #ff3e62); }
+    .vote-no { background: linear-gradient(90deg, #3ccf87, #2fae70); }
+
+    .result-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .result-box {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--card-2);
+      padding: 10px;
+      text-align: center;
+    }
+
+    .result-box .n {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-top: 4px;
+    }
+
+    .reactions {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .react-btn {
+      background: #24365f;
+      border: 1px solid #324974;
+      font-size: 1.05rem;
+      padding: 10px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .react-count {
+      display: inline-flex;
+      min-width: 24px;
+      justify-content: center;
+      align-items: center;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: .78rem;
+      font-weight: 800;
+      color: #cfe2ff;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.13);
+    }
+
+    .summary-list {
+      max-height: 38vh;
+      overflow: auto;
+      display: grid;
+      gap: 8px;
+      padding-right: 4px;
+    }
+
+    .summary-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #13203c;
+      padding: 10px;
+    }
+
+    .room-footer {
+      margin-top: 2px;
+    }
+
+    .hide { display: none !important; }
+
+    @media (max-width: 640px) {
+      .result-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card hero">
+      <h1>Yo Nunca - Modo Party</h1>
+      <p id="heroSub" class="sub">
+        Entra con el codigo de partida que te comparta el host desde la app.
+        Esta pagina esta pensada para jugadores (no host).
+      </p>
+    </section>
+
+    <section id="joinSection" class="card">
+      <div id="joinControls">
+        <div class="join-grid">
+          <label for="roomCode" class="muted">Codigo de partida</label>
+          <input id="roomCode" class="mono" maxlength="8" placeholder="EJ: A7K9Q2" autocomplete="off" />
+        </div>
+
+        <div class="row" style="margin-bottom:8px;">
+          <button id="btnJoin" class="btn-main">Unirme</button>
+        </div>
+      </div>
+
+      <div id="statusLine" class="status-line muted"></div>
+    </section>
+
+    <section id="gamePanel" class="panel hide">
+      <article class="card">
+        <div class="row">
+          <span id="pillPhase" class="pill warn">Esperando inicio</span>
+          <span id="pillPlayers" class="pill">Jugadores: 0</span>
+          <span id="pillVotes" class="pill">Votos: 0</span>
+          <span id="pillTimer" class="pill hide"></span>
+        </div>
+      </article>
+
+      <article id="questionCard" class="card hide">
+        <div class="muted">Ronda <span id="roundNow">-</span>/<span id="roundTotal">-</span></div>
+        <div class="question-prefix">YO NUNCA...</div>
+        <div class="big-question" id="questionText">Esperando pregunta...</div>
+        <div class="vote-grid">
+          <button id="btnYes" class="vote-yes">Lo he hecho</button>
+          <button id="btnNo" class="vote-no">No lo he hecho</button>
+        </div>
+        <div id="votedHint" class="status-line muted"></div>
+      </article>
+
+      <article id="resultsCard" class="card hide">
+        <div class="muted">Resultados</div>
+        <div class="result-grid">
+          <div class="result-box">
+            <div class="muted">Si</div>
+            <span id="resYes" class="n" style="color:#ff8ca0;">0</span>
+          </div>
+          <div class="result-box">
+            <div class="muted">No</div>
+            <span id="resNo" class="n" style="color:#9ff0bd;">0</span>
+          </div>
+          <div class="result-box">
+            <div class="muted">No votado</div>
+            <span id="resNV" class="n" style="color:#ffd98f;">0</span>
+          </div>
+        </div>
+
+        <div style="margin-top:10px" class="muted">Reacciones</div>
+        <div class="reactions">
+          <button class="react-btn" data-r="wow"><span>&#128562;</span><span id="rcWow" class="react-count">0</span></button>
+          <button class="react-btn" data-r="heart"><span>&#10084;&#65039;</span><span id="rcHeart" class="react-count">0</span></button>
+          <button class="react-btn" data-r="laugh"><span>&#128514;</span><span id="rcLaugh" class="react-count">0</span></button>
+          <button class="react-btn" data-r="fire"><span>&#128293;</span><span id="rcFire" class="react-count">0</span></button>
+        </div>
+      </article>
+
+      <article id="finishedCard" class="card hide">
+        <div style="font-size:1.1rem;font-weight:800;">Partida finalizada</div>
+        <p class="muted">Resumen de rondas</p>
+        <div id="summaryList" class="summary-list"></div>
+      </article>
+    </section>
+
+    <section id="roomFooter" class="card room-footer hide">
+      <div class="row">
+        <button id="btnLeave" class="btn-danger" disabled>Salir de sala</button>
+        <span id="pillConn" class="pill">Sin conectar</span>
+        <span id="pillRoom" class="pill hide"></span>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+    import { getFirestore, doc, getDoc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+
+    const FIREBASE_CONFIG = {
+      apiKey: 'AIzaSyBx7eIcSrFFQ-TAaGM1DQJ1GNcHc1wDHkg',
+      authDomain: 'yo-nunca-85b0c.firebaseapp.com',
+      projectId: 'yo-nunca-85b0c',
+      storageBucket: 'yo-nunca-85b0c.firebasestorage.app',
+      messagingSenderId: '814751987159',
+      appId: '1:814751987159:web:5849912e1b43a82899c792',
+    };
+
+    const STUN_PRESETS = {
+      google: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
+      ],
+      cloudflare: [
+        { urls: 'stun:stun.cloudflare.com:3478' },
+      ],
+      twilio: [
+        { urls: 'stun:global.stun.twilio.com:3478' },
+      ],
+      metered: [
+        { urls: 'stun:stun.metered.ca:80' },
+      ],
+    };
+
+    const PLAYER_STORAGE_KEY = 'party_web_player_id_v1';
+    const app = initializeApp(FIREBASE_CONFIG);
+    const db = getFirestore(app);
+
+    const ui = {
+      joinSection: document.getElementById('joinSection'),
+      joinControls: document.getElementById('joinControls'),
+      heroSub: document.getElementById('heroSub'),
+      roomFooter: document.getElementById('roomFooter'),
+      roomCode: document.getElementById('roomCode'),
+      btnJoin: document.getElementById('btnJoin'),
+      btnLeave: document.getElementById('btnLeave'),
+      pillConn: document.getElementById('pillConn'),
+      pillRoom: document.getElementById('pillRoom'),
+      statusLine: document.getElementById('statusLine'),
+      gamePanel: document.getElementById('gamePanel'),
+      pillPhase: document.getElementById('pillPhase'),
+      pillPlayers: document.getElementById('pillPlayers'),
+      pillVotes: document.getElementById('pillVotes'),
+      pillTimer: document.getElementById('pillTimer'),
+      questionCard: document.getElementById('questionCard'),
+      resultsCard: document.getElementById('resultsCard'),
+      finishedCard: document.getElementById('finishedCard'),
+      roundNow: document.getElementById('roundNow'),
+      roundTotal: document.getElementById('roundTotal'),
+      questionText: document.getElementById('questionText'),
+      btnYes: document.getElementById('btnYes'),
+      btnNo: document.getElementById('btnNo'),
+      votedHint: document.getElementById('votedHint'),
+      resYes: document.getElementById('resYes'),
+      resNo: document.getElementById('resNo'),
+      resNV: document.getElementById('resNV'),
+      rcWow: document.getElementById('rcWow'),
+      rcHeart: document.getElementById('rcHeart'),
+      rcLaugh: document.getElementById('rcLaugh'),
+      rcFire: document.getElementById('rcFire'),
+      summaryList: document.getElementById('summaryList'),
+      reactBtns: Array.from(document.querySelectorAll('.react-btn')),
+    };
+
+    const state = {
+      playerId: getOrCreatePlayerId(),
+      roomCode: '',
+      connected: false,
+      joining: false,
+      rtcConfiguration: {
+        iceServers: [...STUN_PRESETS.google],
+        iceTransportPolicy: 'all',
+      },
+      roomSignalUnsub: null,
+      roomData: null,
+      players: [],
+      votesCount: 0,
+      localVotedRounds: new Set(),
+      attemptedOfferFingerprint: '',
+      pc: null,
+      channel: null,
+    };
+
+    function getOrCreatePlayerId() {
+      try {
+        const existing = localStorage.getItem(PLAYER_STORAGE_KEY);
+        if (existing) return existing;
+        const id = 'party_' + Math.random().toString(36).slice(2, 10);
+        localStorage.setItem(PLAYER_STORAGE_KEY, id);
+        return id;
+      } catch {
+        return 'party_' + Math.random().toString(36).slice(2, 10);
+      }
+    }
+
+    function normalizeRoomCode(raw) {
+      return String(raw || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
+    }
+
+    function safeJson(raw) {
+      try { return JSON.parse(raw); } catch { return null; }
+    }
+
+    function hide(el, shouldHide) {
+      if (!el) return;
+      el.classList.toggle('hide', !!shouldHide);
+    }
+
+    function setStatus(text, kind = 'info') {
+      const message = String(text || '').trim();
+      ui.statusLine.textContent = message;
+      ui.statusLine.style.color = kind === 'error' ? '#ffadb6' : kind === 'ok' ? '#b8ffd0' : '#9bb0d6';
+      hide(ui.statusLine, message.length === 0);
+    }
+
+    function updateJoinVisibility() {
+      const shouldHideJoinSection = state.connected || !!state.roomData;
+      const shouldShowRoomFooter = state.connected || !!state.roomData || !!state.roomCode || state.joining;
+      hide(ui.joinSection, shouldHideJoinSection);
+      hide(ui.joinControls, shouldHideJoinSection);
+      hide(ui.heroSub, shouldShowRoomFooter);
+      hide(ui.roomFooter, !shouldShowRoomFooter);
+    }
+
+    function setConnectedUI(connected) {
+      state.connected = connected;
+      ui.pillConn.textContent = connected ? 'Conectado al host' : 'Sin conectar';
+      ui.pillConn.className = connected ? 'pill ok' : 'pill';
+      ui.btnLeave.disabled = !state.roomCode;
+      updateJoinVisibility();
+    }
+
+    function closePeerConnection() {
+      if (state.channel) {
+        try { state.channel.close(); } catch {}
+      }
+      if (state.pc) {
+        try { state.pc.close(); } catch {}
+      }
+      state.channel = null;
+      state.pc = null;
+      setConnectedUI(false);
+    }
+
+    function resetGameState(keepRoomCode = false) {
+      state.roomData = null;
+      state.players = [];
+      state.votesCount = 0;
+      state.localVotedRounds.clear();
+      state.attemptedOfferFingerprint = '';
+      if (!keepRoomCode) state.roomCode = '';
+      render();
+    }
+
+    function leaveRoom(showMessage = true) {
+      closePeerConnection();
+      if (state.roomSignalUnsub) {
+        try { state.roomSignalUnsub(); } catch {}
+        state.roomSignalUnsub = null;
+      }
+      resetGameState(false);
+      if (showMessage) setStatus('Has salido de la sala.');
+      hide(ui.pillRoom, true);
+      ui.pillRoom.textContent = '';
+      ui.btnLeave.disabled = true;
+      updateJoinVisibility();
+    }
+
+    function parseOfferPayload(raw) {
+      const data = safeJson(raw);
+      if (!data || data.v !== 1 || data.type !== 'party_offer') return null;
+      if (!data.roomCode || !data.connectionId || !data.hostPlayerId || !data.offer) return null;
+      return data;
+    }
+
+    function parseWireMessage(raw) {
+      const data = safeJson(raw);
+      if (!data || typeof data !== 'object') return null;
+      if (data.type === 'sync') return data;
+      if (data.type === 'room_closed') return data;
+      return null;
+    }
+
+    function normalizeTurnUrls(value) {
+      if (Array.isArray(value)) return value.map((v) => String(v || '').trim()).filter((v) => v.length > 0);
+      if (typeof value === 'string') return value.split(/[,\n]/).map((v) => v.trim()).filter((v) => v.length > 0);
+      return [];
+    }
+
+    async function loadRtcConfigFromFeatureFlags() {
+      try {
+        const snap = await getDoc(doc(db, 'config', 'feature_flags'));
+        if (!snap.exists()) return;
+
+        const data = snap.data() || {};
+        const mode = String(data.party_connection_mode || 'stun').trim().toLowerCase();
+        if (mode === 'turn') {
+          const urls = normalizeTurnUrls(data.party_turn_urls);
+          if (urls.length > 0) {
+            const username = String(data.party_turn_username || '').trim();
+            const credential = String(data.party_turn_credential || '').trim();
+            state.rtcConfiguration = {
+              iceServers: [{ urls, ...(username ? { username } : {}), ...(credential ? { credential } : {}) }],
+              iceTransportPolicy: 'relay',
+            };
+            return;
+          }
+        }
+
+        const providerRaw = String(data.party_stun_provider || 'google').trim().toLowerCase();
+        const provider = STUN_PRESETS[providerRaw] ? providerRaw : 'google';
+        state.rtcConfiguration = {
+          iceServers: [...STUN_PRESETS[provider]],
+          iceTransportPolicy: 'all',
+        };
+      } catch {}
+    }
+
+    async function waitForIceGatheringComplete(pc, timeoutMs = 8000) {
+      if (pc.iceGatheringState === 'complete') return;
+      await new Promise((resolve) => {
+        let done = false;
+        const finish = () => {
+          if (done) return;
+          done = true;
+          pc.removeEventListener('icegatheringstatechange', onIce);
+          resolve();
+        };
+        const onIce = () => {
+          if (pc.iceGatheringState === 'complete') finish();
+        };
+        pc.addEventListener('icegatheringstatechange', onIce);
+        setTimeout(finish, timeoutMs);
+      });
+    }
+
+    async function joinWithOffer(activeOffer) {
+      const offerData = parseOfferPayload(activeOffer);
+      if (!offerData) {
+        setStatus('Oferta de conexion invalida.', 'error');
+        return;
+      }
+
+      state.joining = true;
+      state.attemptedOfferFingerprint = offerData.connectionId + ':' + String(offerData.roomCode || '');
+
+      try {
+        closePeerConnection();
+
+        const pc = new RTCPeerConnection(state.rtcConfiguration);
+        state.pc = pc;
+
+        const channelReady = new Promise((resolve, reject) => {
+          const timeout = setTimeout(() => reject(new Error('No se pudo abrir el canal con el host.')), 20000);
+          pc.ondatachannel = (event) => {
+            clearTimeout(timeout);
+            resolve(event.channel);
+          };
+        });
+
+        await pc.setRemoteDescription(new RTCSessionDescription(offerData.offer));
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        await waitForIceGatheringComplete(pc);
+
+        const answerPayload = {
+          v: 1,
+          type: 'party_answer',
+          roomCode: offerData.roomCode,
+          clientPlayerId: state.playerId,
+          connectionId: offerData.connectionId,
+          answer: pc.localDescription || answer,
+        };
+
+        await setDoc(doc(db, 'party_rooms', offerData.roomCode, 'answers', offerData.connectionId), {
+          connectionId: offerData.connectionId,
+          clientPlayerId: state.playerId,
+          answerPayload: JSON.stringify(answerPayload),
+          createdAt: Date.now(),
+        });
+
+        const channel = await channelReady;
+        state.channel = channel;
+        bindDataChannel(channel);
+        setStatus('Uniendote... esperando confirmacion del host.');
+      } catch (err) {
+        closePeerConnection();
+        setStatus(err?.message || 'Error al conectarte al host.', 'error');
+      } finally {
+        state.joining = false;
+      }
+    }
+
+    function bindDataChannel(channel) {
+      channel.onopen = () => {
+        setConnectedUI(true);
+        try {
+          channel.send(JSON.stringify({ type: 'hello', playerId: state.playerId }));
+        } catch {}
+        setStatus('Conectado. Esperando inicio de partida...', 'ok');
+      };
+
+      channel.onclose = () => {
+        setConnectedUI(false);
+        if (state.roomData) {
+          state.roomData.status = 'closed';
+          state.roomData.closedReason = 'host_left';
+          render();
+        }
+        setStatus('Conexion cerrada. El host ha salido o se perdio la sesion.', 'error');
+      };
+
+      channel.onmessage = (event) => {
+        const msg = parseWireMessage(event.data);
+        if (!msg) return;
+
+        if (msg.type === 'sync') {
+          state.roomData = msg.roomData || null;
+          state.players = Array.isArray(msg.players) ? msg.players : [];
+          state.votesCount = Number.isFinite(msg.votesCount) ? Math.max(0, Math.floor(msg.votesCount)) : 0;
+          render();
+          return;
+        }
+
+        if (msg.type === 'room_closed') {
+          if (state.roomData) {
+            state.roomData.status = 'closed';
+            state.roomData.closedReason = msg.reason || 'closed';
+          }
+          render();
+          setStatus('La sala se cerro.', 'warn');
+        }
+      };
+    }
+
+    async function startJoinByCode(code) {
+      const roomCode = normalizeRoomCode(code);
+      if (roomCode.length < 5) {
+        setStatus('Introduce un codigo valido (minimo 5 caracteres).', 'error');
+        return;
+      }
+
+      leaveRoom(false);
+      state.roomCode = roomCode;
+      ui.roomCode.value = roomCode;
+      ui.pillRoom.textContent = 'Sala ' + roomCode;
+      hide(ui.pillRoom, false);
+      ui.btnLeave.disabled = false;
+      updateJoinVisibility();
+      setStatus('Buscando sala ' + roomCode + '...');
+
+      const roomRef = doc(db, 'party_rooms', roomCode);
+      const snap = await getDoc(roomRef);
+      if (!snap.exists()) {
+        leaveRoom(false);
+        setStatus('No existe una sala activa con ese codigo.', 'error');
+        return;
+      }
+
+      state.roomSignalUnsub = onSnapshot(roomRef, (roomSnap) => {
+        if (!roomSnap.exists()) {
+          setStatus('La sala ya no existe.', 'error');
+          return;
+        }
+
+        const data = roomSnap.data() || {};
+        if (data.status === 'closed') {
+          if (state.roomData) {
+            state.roomData.status = 'closed';
+            state.roomData.closedReason = 'closed';
+          }
+          render();
+          setStatus('La sala fue cerrada por el host.', 'warn');
+        }
+
+        const activeOffer = String(data.activeOffer || '').trim();
+        const offerData = parseOfferPayload(activeOffer);
+        if (!offerData) {
+          if (!state.connected) setStatus('Esperando invitacion del host...');
+          return;
+        }
+
+        const fingerprint = offerData.connectionId + ':' + offerData.roomCode;
+        if (state.connected || state.joining || state.attemptedOfferFingerprint === fingerprint) return;
+        void joinWithOffer(activeOffer);
+      }, (error) => {
+        setStatus('Error observando la sala: ' + (error?.message || 'desconocido'), 'error');
+      });
+    }
+
+    function sendVote(choice) {
+      if (!state.channel || state.channel.readyState !== 'open' || !state.roomData) return;
+      if (state.roomData.status !== 'question') return;
+
+      const roundIndex = state.roomData.roundIndex;
+      if (state.localVotedRounds.has(roundIndex)) return;
+
+      try {
+        state.channel.send(JSON.stringify({ type: 'vote', choice, roundIndex }));
+        state.localVotedRounds.add(roundIndex);
+        ui.votedHint.textContent = 'Voto enviado.';
+        render();
+      } catch {
+        setStatus('No se pudo enviar el voto.', 'error');
+      }
+    }
+
+    function sendReaction(reaction) {
+      if (!state.channel || state.channel.readyState !== 'open' || !state.roomData) return;
+      if (state.roomData.status !== 'results') return;
+
+      try {
+        state.channel.send(JSON.stringify({ type: 'reaction', reaction }));
+      } catch {
+        setStatus('No se pudo enviar la reaccion.', 'error');
+      }
+    }
+
+    function escapeHtml(s) {
+      return s
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function render() {
+      const data = state.roomData;
+      hide(ui.gamePanel, !data);
+
+      if (!data) {
+        hide(ui.questionCard, true);
+        hide(ui.resultsCard, true);
+        hide(ui.finishedCard, true);
+        ui.pillPhase.textContent = 'Esperando inicio';
+        ui.pillPlayers.textContent = 'Jugadores: 0';
+        ui.pillVotes.textContent = 'Votos: 0';
+        ui.rcWow.textContent = '0';
+        ui.rcHeart.textContent = '0';
+        ui.rcLaugh.textContent = '0';
+        ui.rcFire.textContent = '0';
+        hide(ui.pillTimer, true);
+        updateJoinVisibility();
+        return;
+      }
+
+      updateJoinVisibility();
+      ui.pillPlayers.textContent = 'Jugadores: ' + (Array.isArray(state.players) ? state.players.length : 0);
+      ui.pillVotes.textContent = 'Votos: ' + (state.votesCount || 0);
+
+      const phase = data.status || 'lobby';
+      ui.pillPhase.textContent =
+        phase === 'question' ? 'En pregunta' :
+        phase === 'results' ? 'Resultados' :
+        phase === 'finished' ? 'Finalizada' :
+        phase === 'closed' ? 'Cerrada' :
+        'Lobby';
+      ui.pillPhase.className =
+        phase === 'closed' ? 'pill danger' :
+        phase === 'finished' ? 'pill ok' :
+        phase === 'question' ? 'pill warn' :
+        'pill';
+
+      hide(ui.questionCard, phase !== 'question');
+      hide(ui.resultsCard, phase !== 'results');
+      hide(ui.finishedCard, phase !== 'finished');
+
+      // Limpia el mensaje de "esperando inicio" cuando la partida ya esta en marcha.
+      if (phase !== 'lobby' && phase !== 'closed') {
+        setStatus('');
+      }
+
+      const reactionCounts = data.reactionCounts || {};
+      ui.rcWow.textContent = String(Number(reactionCounts.wow || 0));
+      ui.rcHeart.textContent = String(Number(reactionCounts.heart || 0));
+      ui.rcLaugh.textContent = String(Number(reactionCounts.laugh || 0));
+      ui.rcFire.textContent = String(Number(reactionCounts.fire || 0));
+
+      if (phase === 'question') {
+        ui.roundNow.textContent = String((data.roundIndex || 0) + 1);
+        ui.roundTotal.textContent = String(data.totalRounds || 10);
+        ui.questionText.textContent = String(data.questionText || '...');
+        const voted = state.localVotedRounds.has(data.roundIndex);
+        ui.btnYes.disabled = voted;
+        ui.btnNo.disabled = voted;
+        ui.votedHint.textContent = voted ? 'Ya votaste en esta ronda.' : '';
+      }
+
+      if (phase === 'results') {
+        const r = data.results || {};
+        ui.resYes.textContent = String(r.yes || 0);
+        ui.resNo.textContent = String(r.no || 0);
+        ui.resNV.textContent = String(r.notVoted || 0);
+      }
+
+      if (phase === 'finished') {
+        const rows = Array.isArray(data.roundSummaries) ? data.roundSummaries : [];
+        if (rows.length === 0) {
+          ui.summaryList.innerHTML = '<div class="summary-item muted">No hay resumen disponible.</div>';
+        } else {
+          ui.summaryList.innerHTML = rows.map((row) => (
+            '<div class="summary-item">' +
+              '<div class="muted">Ronda ' + Number(row.roundNumber || 0) + '</div>' +
+              '<div style="margin:4px 0 6px;font-weight:700;">' + escapeHtml(String(row.questionText || '')) + '</div>' +
+              '<div class="muted">Si: ' + Number(row.yes || 0) + ' | No: ' + Number(row.no || 0) + ' | No votado: ' + Number(row.notVoted || 0) + '</div>' +
+            '</div>'
+          )).join('');
+        }
+      }
+
+      if (phase === 'closed') {
+        setStatus('Sala cerrada por el host.', 'warn');
+      }
+    }
+
+    function updateTimer() {
+      const data = state.roomData;
+      if (!data || !data.questionDeadlineAt || data.status !== 'question') {
+        hide(ui.pillTimer, true);
+        return;
+      }
+      const secs = Math.max(0, Math.ceil((Number(data.questionDeadlineAt) - Date.now()) / 1000));
+      ui.pillTimer.textContent = 'Tiempo: ' + secs + 's';
+      hide(ui.pillTimer, false);
+    }
+
+    ui.roomCode.addEventListener('input', () => {
+      ui.roomCode.value = normalizeRoomCode(ui.roomCode.value);
+    });
+
+    ui.btnJoin.addEventListener('click', () => {
+      void startJoinByCode(ui.roomCode.value);
+    });
+
+    ui.roomCode.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        void startJoinByCode(ui.roomCode.value);
+      }
+    });
+
+    ui.btnLeave.addEventListener('click', () => {
+      leaveRoom(true);
+    });
+
+    ui.btnYes.addEventListener('click', () => sendVote('yes'));
+    ui.btnNo.addEventListener('click', () => sendVote('no'));
+
+    ui.reactBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        sendReaction(btn.dataset.r || '');
+      });
+    });
+
+    setInterval(updateTimer, 300);
+    setConnectedUI(false);
+    render();
+    void loadRtcConfigFromFeatureFlags();
+
+    const params = new URLSearchParams(window.location.search);
+    const autoCode = normalizeRoomCode(params.get('party') || '');
+    if (autoCode) {
+      ui.roomCode.value = autoCode;
+      void startJoinByCode(autoCode);
+    } else {
+      setStatus('Listo. Introduce el codigo de partida para unirte.');
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
+
