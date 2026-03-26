@@ -12,4 +12,4 @@ function copyFile(sourceRelativePath, destinationRelativePath) {
 }
 
 copyFile('CNAME', 'CNAME');
-copyFile('index-party.html', path.join('public', 'apps', 'yo-nunca', 'play-party', 'index.html'));
+copyFile('index-party.html', path.join('apps', 'yo-nunca', 'play-party', 'index.html'));
