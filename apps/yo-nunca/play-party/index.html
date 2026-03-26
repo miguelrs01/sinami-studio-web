@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8" />
@@ -271,7 +271,7 @@
 <body>
   <main class="wrap">
     <section class="card hero">
-      <h1>Yo Nunca - Modo Party</h1>
+      <h1 id="heroTitle">Yo Nunca - Modo Party</h1>
       <p id="heroSub" class="sub">
         Entra con el codigo de partida que te comparta el host desde la app.
         Esta pagina esta pensada para jugadores (no host).
@@ -281,7 +281,7 @@
     <section id="joinSection" class="card">
       <div id="joinControls">
         <div class="join-grid">
-          <label for="roomCode" class="muted">Codigo de partida</label>
+          <label id="roomCodeLabel" for="roomCode" class="muted">Codigo de partida</label>
           <input id="roomCode" class="mono" maxlength="8" placeholder="EJ: A7K9Q2" autocomplete="off" />
         </div>
 
@@ -304,8 +304,8 @@
       </article>
 
       <article id="questionCard" class="card hide">
-        <div class="muted">Ronda <span id="roundNow">-</span>/<span id="roundTotal">-</span></div>
-        <div class="question-prefix">YO NUNCA...</div>
+        <div class="muted"><span id="roundLabel">Ronda</span> <span id="roundNow">-</span>/<span id="roundTotal">-</span></div>
+        <div id="questionPrefix" class="question-prefix">YO NUNCA...</div>
         <div class="big-question" id="questionText">Esperando pregunta...</div>
         <div class="vote-grid">
           <button id="btnYes" class="vote-yes">Lo he hecho</button>
@@ -315,23 +315,23 @@
       </article>
 
       <article id="resultsCard" class="card hide">
-        <div class="muted">Resultados</div>
+        <div id="resultsTitle" class="muted">Resultados</div>
         <div class="result-grid">
           <div class="result-box">
-            <div class="muted">Si</div>
+            <div id="resultYesLabel" class="muted">Si</div>
             <span id="resYes" class="n" style="color:#ff8ca0;">0</span>
           </div>
           <div class="result-box">
-            <div class="muted">No</div>
+            <div id="resultNoLabel" class="muted">No</div>
             <span id="resNo" class="n" style="color:#9ff0bd;">0</span>
           </div>
           <div class="result-box">
-            <div class="muted">No votado</div>
+            <div id="resultNotVotedLabel" class="muted">No votado</div>
             <span id="resNV" class="n" style="color:#ffd98f;">0</span>
           </div>
         </div>
 
-        <div style="margin-top:10px" class="muted">Reacciones</div>
+        <div id="reactionsTitle" style="margin-top:10px" class="muted">Reacciones</div>
         <div class="reactions">
           <button class="react-btn" data-r="wow"><span>&#128562;</span><span id="rcWow" class="react-count">0</span></button>
           <button class="react-btn" data-r="heart"><span>&#10084;&#65039;</span><span id="rcHeart" class="react-count">0</span></button>
@@ -341,8 +341,8 @@
       </article>
 
       <article id="finishedCard" class="card hide">
-        <div style="font-size:1.1rem;font-weight:800;">Partida finalizada</div>
-        <p class="muted">Resumen de rondas</p>
+        <div id="finishedTitle" style="font-size:1.1rem;font-weight:800;">Partida finalizada</div>
+        <p id="finishedSubtitle" class="muted">Resumen de rondas</p>
         <div id="summaryList" class="summary-list"></div>
       </article>
     </section>
@@ -359,6 +359,7 @@
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
     import { getFirestore, doc, getDoc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+    import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
 
     const FIREBASE_CONFIG = {
       apiKey: 'AIzaSyBx7eIcSrFFQ-TAaGM1DQJ1GNcHc1wDHkg',
@@ -369,6 +370,426 @@
       appId: '1:814751987159:web:5849912e1b43a82899c792',
     };
 
+    const SUPPORTED_LANGS = ['es', 'en', 'fr', 'de', 'pt', 'it'];
+    const I18N = {
+      es: {
+        pageTitle: 'Yo Nunca - Modo Party',
+        pageDescription: 'Unete a una sala Party Online con codigo y juega desde tu navegador.',
+        heroTitle: 'Yo Nunca - Modo Party',
+        heroSub: 'Entra con el codigo de partida que te comparta el host desde la app. Esta pagina esta pensada para jugadores (no host).',
+        roomCodeLabel: 'Codigo de partida',
+        joinButton: 'Unirme',
+        waitingStart: 'Esperando inicio',
+        players: 'Jugadores',
+        votes: 'Votos',
+        round: 'Ronda',
+        never: 'YO NUNCA...',
+        waitingQuestion: 'Esperando pregunta...',
+        voteYes: 'Lo he hecho',
+        voteNo: 'No lo he hecho',
+        results: 'Resultados',
+        resultYes: 'Si',
+        resultNo: 'No',
+        resultNotVoted: 'No votado',
+        reactions: 'Reacciones',
+        finishedTitle: 'Partida finalizada',
+        finishedSubtitle: 'Resumen de rondas',
+        leaveRoom: 'Salir de sala',
+        disconnected: 'Sin conectar',
+        connectedToHost: 'Conectado al host',
+        leftRoom: 'Has salido de la sala.',
+        invalidOffer: 'Oferta de conexion invalida.',
+        channelOpenError: 'No se pudo abrir el canal con el host.',
+        joiningWait: 'Uniendote... esperando confirmacion del host.',
+        connectHostError: 'Error al conectarte al host.',
+        connectedWaitStart: 'Conectado. Esperando inicio de partida...',
+        connectionClosed: 'Conexion cerrada. El host ha salido o se perdio la sesion.',
+        roomClosed: 'La sala se cerro.',
+        invalidCode: 'Introduce un codigo valido (minimo 5 caracteres).',
+        secureAuthError: 'No se pudo iniciar sesion segura.',
+        searchingRoom: 'Buscando sala {roomCode}...',
+        roomPill: 'Sala {roomCode}',
+        noActiveRoom: 'No existe una sala activa con ese codigo.',
+        roomNoLongerExists: 'La sala ya no existe.',
+        roomClosedByHost: 'La sala fue cerrada por el host.',
+        waitingInvite: 'Esperando invitacion del host...',
+        watchRoomError: 'Error observando la sala: {error}',
+        voteSent: 'Voto enviado.',
+        voteSendError: 'No se pudo enviar el voto.',
+        reactionSendError: 'No se pudo enviar la reaccion.',
+        phaseQuestion: 'En pregunta',
+        phaseResults: 'Resultados',
+        phaseFinished: 'Finalizada',
+        phaseClosed: 'Cerrada',
+        phaseLobby: 'Lobby',
+        votedInRound: 'Ya votaste en esta ronda.',
+        summaryUnavailable: 'No hay resumen disponible.',
+        summaryRound: 'Ronda {round}',
+        summaryStats: 'Si: {yes} | No: {no} | No votado: {notVoted}',
+        roomClosedStatus: 'Sala cerrada por el host.',
+        timer: 'Tiempo: {secs}s',
+        authReloadError: 'Error de autenticacion segura. Recarga la pagina.',
+        readyPrompt: 'Listo. Introduce el codigo de partida para unirte.'
+      },
+      en: {
+        pageTitle: 'Never Have I Ever - Party Mode',
+        pageDescription: 'Join an online Party room with a code and play from your browser.',
+        heroTitle: 'Never Have I Ever - Party Mode',
+        heroSub: 'Join using the game code shared by the host from the app. This page is intended for players (not host).',
+        roomCodeLabel: 'Game code',
+        joinButton: 'Join',
+        waitingStart: 'Waiting to start',
+        players: 'Players',
+        votes: 'Votes',
+        round: 'Round',
+        never: 'NEVER HAVE I EVER...',
+        waitingQuestion: 'Waiting for prompt...',
+        voteYes: 'I have',
+        voteNo: 'I have not',
+        results: 'Results',
+        resultYes: 'Yes',
+        resultNo: 'No',
+        resultNotVoted: 'Not voted',
+        reactions: 'Reactions',
+        finishedTitle: 'Game finished',
+        finishedSubtitle: 'Round summary',
+        leaveRoom: 'Leave room',
+        disconnected: 'Not connected',
+        connectedToHost: 'Connected to host',
+        leftRoom: 'You left the room.',
+        invalidOffer: 'Invalid connection offer.',
+        channelOpenError: 'Could not open data channel with host.',
+        joiningWait: 'Joining... waiting for host confirmation.',
+        connectHostError: 'Error connecting to host.',
+        connectedWaitStart: 'Connected. Waiting for game start...',
+        connectionClosed: 'Connection closed. The host left or the session was lost.',
+        roomClosed: 'The room was closed.',
+        invalidCode: 'Enter a valid code (minimum 5 characters).',
+        secureAuthError: 'Could not start secure session.',
+        searchingRoom: 'Searching room {roomCode}...',
+        roomPill: 'Room {roomCode}',
+        noActiveRoom: 'No active room exists with that code.',
+        roomNoLongerExists: 'Room no longer exists.',
+        roomClosedByHost: 'The room was closed by the host.',
+        waitingInvite: 'Waiting for host invite...',
+        watchRoomError: 'Error watching room: {error}',
+        voteSent: 'Vote sent.',
+        voteSendError: 'Could not send vote.',
+        reactionSendError: 'Could not send reaction.',
+        phaseQuestion: 'Question',
+        phaseResults: 'Results',
+        phaseFinished: 'Finished',
+        phaseClosed: 'Closed',
+        phaseLobby: 'Lobby',
+        votedInRound: 'You already voted in this round.',
+        summaryUnavailable: 'No summary available.',
+        summaryRound: 'Round {round}',
+        summaryStats: 'Yes: {yes} | No: {no} | Not voted: {notVoted}',
+        roomClosedStatus: 'Room closed by host.',
+        timer: 'Time: {secs}s',
+        authReloadError: 'Secure authentication error. Reload the page.',
+        readyPrompt: 'Ready. Enter the game code to join.'
+      },
+      fr: {
+        pageTitle: 'Je n ai jamais - Mode Party',
+        pageDescription: 'Rejoins une salle Party en ligne avec un code et joue depuis ton navigateur.',
+        heroTitle: 'Je n ai jamais - Mode Party',
+        heroSub: 'Entre avec le code de partie partage par l hote depuis l app. Cette page est pensee pour les joueurs (pas l hote).',
+        roomCodeLabel: 'Code de partie',
+        joinButton: 'Rejoindre',
+        waitingStart: 'En attente du debut',
+        players: 'Joueurs',
+        votes: 'Votes',
+        round: 'Manche',
+        never: 'JE N AI JAMAIS...',
+        waitingQuestion: 'En attente de la question...',
+        voteYes: 'Je l ai fait',
+        voteNo: 'Je ne l ai pas fait',
+        results: 'Resultats',
+        resultYes: 'Oui',
+        resultNo: 'Non',
+        resultNotVoted: 'Pas vote',
+        reactions: 'Reactions',
+        finishedTitle: 'Partie terminee',
+        finishedSubtitle: 'Resume des manches',
+        leaveRoom: 'Quitter la salle',
+        disconnected: 'Non connecte',
+        connectedToHost: 'Connecte a l hote',
+        leftRoom: 'Tu as quitte la salle.',
+        invalidOffer: 'Offre de connexion invalide.',
+        channelOpenError: 'Impossible d ouvrir le canal avec l hote.',
+        joiningWait: 'Connexion... en attente de confirmation de l hote.',
+        connectHostError: 'Erreur de connexion a l hote.',
+        connectedWaitStart: 'Connecte. En attente du debut de partie...',
+        connectionClosed: 'Connexion fermee. L hote est parti ou la session est perdue.',
+        roomClosed: 'La salle a ete fermee.',
+        invalidCode: 'Entre un code valide (minimum 5 caracteres).',
+        secureAuthError: 'Impossible de demarrer une session securisee.',
+        searchingRoom: 'Recherche de la salle {roomCode}...',
+        roomPill: 'Salle {roomCode}',
+        noActiveRoom: 'Aucune salle active avec ce code.',
+        roomNoLongerExists: 'La salle n existe plus.',
+        roomClosedByHost: 'La salle a ete fermee par l hote.',
+        waitingInvite: 'En attente de l invitation de l hote...',
+        watchRoomError: 'Erreur pendant l observation de la salle : {error}',
+        voteSent: 'Vote envoye.',
+        voteSendError: 'Impossible d envoyer le vote.',
+        reactionSendError: 'Impossible d envoyer la reaction.',
+        phaseQuestion: 'Question',
+        phaseResults: 'Resultats',
+        phaseFinished: 'Terminee',
+        phaseClosed: 'Fermee',
+        phaseLobby: 'Lobby',
+        votedInRound: 'Tu as deja vote dans cette manche.',
+        summaryUnavailable: 'Aucun resume disponible.',
+        summaryRound: 'Manche {round}',
+        summaryStats: 'Oui: {yes} | Non: {no} | Pas vote: {notVoted}',
+        roomClosedStatus: 'Salle fermee par l hote.',
+        timer: 'Temps: {secs}s',
+        authReloadError: 'Erreur d authentification securisee. Recharge la page.',
+        readyPrompt: 'Pret. Entre le code de partie pour rejoindre.'
+      },
+      de: {
+        pageTitle: 'Ich habe noch nie - Party-Modus',
+        pageDescription: 'Tritt einem Online-Party-Raum per Code bei und spiele im Browser.',
+        heroTitle: 'Ich habe noch nie - Party-Modus',
+        heroSub: 'Tritt mit dem vom Host in der App geteilten Spielcode bei. Diese Seite ist fur Spieler gedacht (nicht fur Host).',
+        roomCodeLabel: 'Spielcode',
+        joinButton: 'Beitreten',
+        waitingStart: 'Warten auf Start',
+        players: 'Spieler',
+        votes: 'Stimmen',
+        round: 'Runde',
+        never: 'ICH HABE NOCH NIE...',
+        waitingQuestion: 'Warten auf Frage...',
+        voteYes: 'Habe ich gemacht',
+        voteNo: 'Habe ich nicht gemacht',
+        results: 'Ergebnisse',
+        resultYes: 'Ja',
+        resultNo: 'Nein',
+        resultNotVoted: 'Nicht abgestimmt',
+        reactions: 'Reaktionen',
+        finishedTitle: 'Spiel beendet',
+        finishedSubtitle: 'Rundenubersicht',
+        leaveRoom: 'Raum verlassen',
+        disconnected: 'Nicht verbunden',
+        connectedToHost: 'Mit Host verbunden',
+        leftRoom: 'Du hast den Raum verlassen.',
+        invalidOffer: 'Ungueltiges Verbindungsangebot.',
+        channelOpenError: 'Datenkanal zum Host konnte nicht geoffnet werden.',
+        joiningWait: 'Beitritt... warte auf Bestatigung vom Host.',
+        connectHostError: 'Fehler bei der Verbindung zum Host.',
+        connectedWaitStart: 'Verbunden. Warte auf Spielstart...',
+        connectionClosed: 'Verbindung geschlossen. Host hat den Raum verlassen oder Sitzung verloren.',
+        roomClosed: 'Der Raum wurde geschlossen.',
+        invalidCode: 'Gib einen gueltigen Code ein (mindestens 5 Zeichen).',
+        secureAuthError: 'Sichere Sitzung konnte nicht gestartet werden.',
+        searchingRoom: 'Suche Raum {roomCode}...',
+        roomPill: 'Raum {roomCode}',
+        noActiveRoom: 'Kein aktiver Raum mit diesem Code vorhanden.',
+        roomNoLongerExists: 'Der Raum existiert nicht mehr.',
+        roomClosedByHost: 'Der Raum wurde vom Host geschlossen.',
+        waitingInvite: 'Warte auf Einladung vom Host...',
+        watchRoomError: 'Fehler beim Beobachten des Raums: {error}',
+        voteSent: 'Stimme gesendet.',
+        voteSendError: 'Stimme konnte nicht gesendet werden.',
+        reactionSendError: 'Reaktion konnte nicht gesendet werden.',
+        phaseQuestion: 'Frage',
+        phaseResults: 'Ergebnisse',
+        phaseFinished: 'Beendet',
+        phaseClosed: 'Geschlossen',
+        phaseLobby: 'Lobby',
+        votedInRound: 'Du hast in dieser Runde bereits abgestimmt.',
+        summaryUnavailable: 'Keine Zusammenfassung verfugbar.',
+        summaryRound: 'Runde {round}',
+        summaryStats: 'Ja: {yes} | Nein: {no} | Nicht abgestimmt: {notVoted}',
+        roomClosedStatus: 'Raum vom Host geschlossen.',
+        timer: 'Zeit: {secs}s',
+        authReloadError: 'Fehler bei sicherer Authentifizierung. Seite neu laden.',
+        readyPrompt: 'Bereit. Gib den Spielcode ein, um beizutreten.'
+      },
+      pt: {
+        pageTitle: 'Eu Nunca - Modo Party',
+        pageDescription: 'Entra numa sala Party Online com codigo e joga no teu navegador.',
+        heroTitle: 'Eu Nunca - Modo Party',
+        heroSub: 'Entra com o codigo de partida partilhado pelo host na app. Esta pagina e para jogadores (nao host).',
+        roomCodeLabel: 'Codigo da partida',
+        joinButton: 'Entrar',
+        waitingStart: 'A aguardar inicio',
+        players: 'Jogadores',
+        votes: 'Votos',
+        round: 'Ronda',
+        never: 'EU NUNCA...',
+        waitingQuestion: 'A aguardar pergunta...',
+        voteYes: 'Ja fiz',
+        voteNo: 'Nao fiz',
+        results: 'Resultados',
+        resultYes: 'Sim',
+        resultNo: 'Nao',
+        resultNotVoted: 'Nao votou',
+        reactions: 'Reacoes',
+        finishedTitle: 'Partida terminada',
+        finishedSubtitle: 'Resumo das rondas',
+        leaveRoom: 'Sair da sala',
+        disconnected: 'Sem ligacao',
+        connectedToHost: 'Ligado ao host',
+        leftRoom: 'Saiste da sala.',
+        invalidOffer: 'Oferta de ligacao invalida.',
+        channelOpenError: 'Nao foi possivel abrir o canal com o host.',
+        joiningWait: 'A entrar... a aguardar confirmacao do host.',
+        connectHostError: 'Erro ao ligar ao host.',
+        connectedWaitStart: 'Ligado. A aguardar inicio da partida...',
+        connectionClosed: 'Ligacao fechada. O host saiu ou a sessao perdeu-se.',
+        roomClosed: 'A sala foi encerrada.',
+        invalidCode: 'Introduz um codigo valido (minimo 5 caracteres).',
+        secureAuthError: 'Nao foi possivel iniciar sessao segura.',
+        searchingRoom: 'A procurar sala {roomCode}...',
+        roomPill: 'Sala {roomCode}',
+        noActiveRoom: 'Nao existe sala ativa com esse codigo.',
+        roomNoLongerExists: 'A sala ja nao existe.',
+        roomClosedByHost: 'A sala foi encerrada pelo host.',
+        waitingInvite: 'A aguardar convite do host...',
+        watchRoomError: 'Erro ao observar sala: {error}',
+        voteSent: 'Voto enviado.',
+        voteSendError: 'Nao foi possivel enviar o voto.',
+        reactionSendError: 'Nao foi possivel enviar a reacao.',
+        phaseQuestion: 'Pergunta',
+        phaseResults: 'Resultados',
+        phaseFinished: 'Terminada',
+        phaseClosed: 'Encerrada',
+        phaseLobby: 'Lobby',
+        votedInRound: 'Ja votaste nesta ronda.',
+        summaryUnavailable: 'Nao ha resumo disponivel.',
+        summaryRound: 'Ronda {round}',
+        summaryStats: 'Sim: {yes} | Nao: {no} | Nao votado: {notVoted}',
+        roomClosedStatus: 'Sala encerrada pelo host.',
+        timer: 'Tempo: {secs}s',
+        authReloadError: 'Erro de autenticacao segura. Recarrega a pagina.',
+        readyPrompt: 'Pronto. Introduz o codigo da partida para entrares.'
+      },
+      it: {
+        pageTitle: 'Non ho mai - Modalita Party',
+        pageDescription: 'Entra in una sala Party Online con codice e gioca dal browser.',
+        heroTitle: 'Non ho mai - Modalita Party',
+        heroSub: 'Entra con il codice partita condiviso dall host tramite app. Questa pagina e pensata per i giocatori (non host).',
+        roomCodeLabel: 'Codice partita',
+        joinButton: 'Entra',
+        waitingStart: 'In attesa di inizio',
+        players: 'Giocatori',
+        votes: 'Voti',
+        round: 'Round',
+        never: 'NON HO MAI...',
+        waitingQuestion: 'In attesa della frase...',
+        voteYes: 'L ho fatto',
+        voteNo: 'Non l ho fatto',
+        results: 'Risultati',
+        resultYes: 'Si',
+        resultNo: 'No',
+        resultNotVoted: 'Non votato',
+        reactions: 'Reazioni',
+        finishedTitle: 'Partita terminata',
+        finishedSubtitle: 'Riepilogo round',
+        leaveRoom: 'Esci dalla sala',
+        disconnected: 'Non connesso',
+        connectedToHost: 'Connesso all host',
+        leftRoom: 'Hai lasciato la sala.',
+        invalidOffer: 'Offerta di connessione non valida.',
+        channelOpenError: 'Impossibile aprire il canale con l host.',
+        joiningWait: 'Accesso in corso... in attesa della conferma host.',
+        connectHostError: 'Errore durante la connessione all host.',
+        connectedWaitStart: 'Connesso. In attesa dell avvio partita...',
+        connectionClosed: 'Connessione chiusa. L host e uscito o la sessione e stata persa.',
+        roomClosed: 'La sala e stata chiusa.',
+        invalidCode: 'Inserisci un codice valido (almeno 5 caratteri).',
+        secureAuthError: 'Impossibile avviare una sessione sicura.',
+        searchingRoom: 'Ricerca sala {roomCode}...',
+        roomPill: 'Sala {roomCode}',
+        noActiveRoom: 'Non esiste una sala attiva con quel codice.',
+        roomNoLongerExists: 'La sala non esiste piu.',
+        roomClosedByHost: 'La sala e stata chiusa dall host.',
+        waitingInvite: 'In attesa dell invito host...',
+        watchRoomError: 'Errore durante il monitoraggio sala: {error}',
+        voteSent: 'Voto inviato.',
+        voteSendError: 'Impossibile inviare il voto.',
+        reactionSendError: 'Impossibile inviare la reazione.',
+        phaseQuestion: 'Domanda',
+        phaseResults: 'Risultati',
+        phaseFinished: 'Terminata',
+        phaseClosed: 'Chiusa',
+        phaseLobby: 'Lobby',
+        votedInRound: 'Hai gia votato in questo round.',
+        summaryUnavailable: 'Nessun riepilogo disponibile.',
+        summaryRound: 'Round {round}',
+        summaryStats: 'Si: {yes} | No: {no} | Non votato: {notVoted}',
+        roomClosedStatus: 'Sala chiusa dall host.',
+        timer: 'Tempo: {secs}s',
+        authReloadError: 'Errore di autenticazione sicura. Ricarica la pagina.',
+        readyPrompt: 'Pronto. Inserisci il codice partita per entrare.'
+      }
+    };
+
+    function resolveLanguage(raw) {
+      const value = String(raw || '').trim().toLowerCase();
+      for (const code of SUPPORTED_LANGS) {
+        if (value === code || value.startsWith(code + '-') || value.startsWith(code + '_')) return code;
+      }
+      return 'es';
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const browserLang = (Array.isArray(navigator.languages) && navigator.languages[0]) || navigator.language || 'es';
+    const LANG = resolveLanguage(urlParams.get('lang') || browserLang);
+
+    function tr(key, vars = {}) {
+      const langDict = I18N[LANG] || I18N.es;
+      let value = langDict[key] || I18N.es[key] || key;
+      Object.keys(vars).forEach((name) => {
+        value = value.replaceAll('{' + name + '}', String(vars[name]));
+      });
+      return value;
+    }
+
+    function applyStaticTexts() {
+      document.documentElement.lang = LANG;
+      document.title = tr('pageTitle');
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', tr('pageDescription'));
+
+      const heroTitle = document.getElementById('heroTitle');
+      if (heroTitle) heroTitle.textContent = tr('heroTitle');
+      const heroSub = document.getElementById('heroSub');
+      if (heroSub) heroSub.textContent = tr('heroSub');
+      const roomCodeLabel = document.getElementById('roomCodeLabel');
+      if (roomCodeLabel) roomCodeLabel.textContent = tr('roomCodeLabel');
+      const btnJoin = document.getElementById('btnJoin');
+      if (btnJoin) btnJoin.textContent = tr('joinButton');
+      const roundLabel = document.getElementById('roundLabel');
+      if (roundLabel) roundLabel.textContent = tr('round');
+      const questionPrefix = document.getElementById('questionPrefix');
+      if (questionPrefix) questionPrefix.textContent = tr('never');
+      const questionText = document.getElementById('questionText');
+      if (questionText) questionText.textContent = tr('waitingQuestion');
+      const btnYes = document.getElementById('btnYes');
+      if (btnYes) btnYes.textContent = tr('voteYes');
+      const btnNo = document.getElementById('btnNo');
+      if (btnNo) btnNo.textContent = tr('voteNo');
+      const resultsTitle = document.getElementById('resultsTitle');
+      if (resultsTitle) resultsTitle.textContent = tr('results');
+      const resultYesLabel = document.getElementById('resultYesLabel');
+      if (resultYesLabel) resultYesLabel.textContent = tr('resultYes');
+      const resultNoLabel = document.getElementById('resultNoLabel');
+      if (resultNoLabel) resultNoLabel.textContent = tr('resultNo');
+      const resultNotVotedLabel = document.getElementById('resultNotVotedLabel');
+      if (resultNotVotedLabel) resultNotVotedLabel.textContent = tr('resultNotVoted');
+      const reactionsTitle = document.getElementById('reactionsTitle');
+      if (reactionsTitle) reactionsTitle.textContent = tr('reactions');
+      const finishedTitle = document.getElementById('finishedTitle');
+      if (finishedTitle) finishedTitle.textContent = tr('finishedTitle');
+      const finishedSubtitle = document.getElementById('finishedSubtitle');
+      if (finishedSubtitle) finishedSubtitle.textContent = tr('finishedSubtitle');
+      const btnLeave = document.getElementById('btnLeave');
+      if (btnLeave) btnLeave.textContent = tr('leaveRoom');
+    }
     const STUN_PRESETS = {
       google: [
         { urls: 'stun:stun.l.google.com:19302' },
@@ -388,11 +809,23 @@
     const PLAYER_STORAGE_KEY = 'party_web_player_id_v1';
     const app = initializeApp(FIREBASE_CONFIG);
     const db = getFirestore(app);
+    const auth = getAuth(app);
 
     const ui = {
       joinSection: document.getElementById('joinSection'),
       joinControls: document.getElementById('joinControls'),
       heroSub: document.getElementById('heroSub'),
+      heroTitle: document.getElementById('heroTitle'),
+      roomCodeLabel: document.getElementById('roomCodeLabel'),
+      roundLabel: document.getElementById('roundLabel'),
+      questionPrefix: document.getElementById('questionPrefix'),
+      resultsTitle: document.getElementById('resultsTitle'),
+      resultYesLabel: document.getElementById('resultYesLabel'),
+      resultNoLabel: document.getElementById('resultNoLabel'),
+      resultNotVotedLabel: document.getElementById('resultNotVotedLabel'),
+      reactionsTitle: document.getElementById('reactionsTitle'),
+      finishedTitle: document.getElementById('finishedTitle'),
+      finishedSubtitle: document.getElementById('finishedSubtitle'),
       roomFooter: document.getElementById('roomFooter'),
       roomCode: document.getElementById('roomCode'),
       btnJoin: document.getElementById('btnJoin'),
@@ -440,6 +873,7 @@
       votesCount: 0,
       localVotedRounds: new Set(),
       attemptedOfferFingerprint: '',
+      authReadyPromise: null,
       pc: null,
       channel: null,
     };
@@ -456,6 +890,19 @@
       }
     }
 
+    async function ensureFirebaseAuth() {
+      if (auth.currentUser?.uid) return auth.currentUser.uid;
+
+      if (!state.authReadyPromise) {
+        state.authReadyPromise = signInAnonymously(auth)
+          .then((cred) => cred.user.uid)
+          .finally(() => {
+            state.authReadyPromise = null;
+          });
+      }
+
+      return state.authReadyPromise;
+    }
     function normalizeRoomCode(raw) {
       return String(raw || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
     }
@@ -487,7 +934,7 @@
 
     function setConnectedUI(connected) {
       state.connected = connected;
-      ui.pillConn.textContent = connected ? 'Conectado al host' : 'Sin conectar';
+      ui.pillConn.textContent = connected ? tr('connectedToHost') : tr('disconnected');
       ui.pillConn.className = connected ? 'pill ok' : 'pill';
       ui.btnLeave.disabled = !state.roomCode;
       updateJoinVisibility();
@@ -522,7 +969,7 @@
         state.roomSignalUnsub = null;
       }
       resetGameState(false);
-      if (showMessage) setStatus('Has salido de la sala.');
+      if (showMessage) setStatus(tr('leftRoom'));
       hide(ui.pillRoom, true);
       ui.pillRoom.textContent = '';
       ui.btnLeave.disabled = true;
@@ -600,7 +1047,7 @@
     async function joinWithOffer(activeOffer) {
       const offerData = parseOfferPayload(activeOffer);
       if (!offerData) {
-        setStatus('Oferta de conexion invalida.', 'error');
+        setStatus(tr('invalidOffer'), 'error');
         return;
       }
 
@@ -614,7 +1061,7 @@
         state.pc = pc;
 
         const channelReady = new Promise((resolve, reject) => {
-          const timeout = setTimeout(() => reject(new Error('No se pudo abrir el canal con el host.')), 20000);
+          const timeout = setTimeout(() => reject(new Error(tr('channelOpenError'))), 20000);
           pc.ondatachannel = (event) => {
             clearTimeout(timeout);
             resolve(event.channel);
@@ -625,6 +1072,8 @@
         const answer = await pc.createAnswer();
         await pc.setLocalDescription(answer);
         await waitForIceGatheringComplete(pc);
+
+        const clientAuthUid = await ensureFirebaseAuth();
 
         const answerPayload = {
           v: 1,
@@ -638,6 +1087,7 @@
         await setDoc(doc(db, 'party_rooms', offerData.roomCode, 'answers', offerData.connectionId), {
           connectionId: offerData.connectionId,
           clientPlayerId: state.playerId,
+          clientAuthUid,
           answerPayload: JSON.stringify(answerPayload),
           createdAt: Date.now(),
         });
@@ -645,10 +1095,10 @@
         const channel = await channelReady;
         state.channel = channel;
         bindDataChannel(channel);
-        setStatus('Uniendote... esperando confirmacion del host.');
+        setStatus(tr('joiningWait'));
       } catch (err) {
         closePeerConnection();
-        setStatus(err?.message || 'Error al conectarte al host.', 'error');
+        setStatus(err?.message || tr('connectHostError'), 'error');
       } finally {
         state.joining = false;
       }
@@ -660,7 +1110,7 @@
         try {
           channel.send(JSON.stringify({ type: 'hello', playerId: state.playerId }));
         } catch {}
-        setStatus('Conectado. Esperando inicio de partida...', 'ok');
+        setStatus(tr('connectedWaitStart'), 'ok');
       };
 
       channel.onclose = () => {
@@ -670,7 +1120,7 @@
           state.roomData.closedReason = 'host_left';
           render();
         }
-        setStatus('Conexion cerrada. El host ha salido o se perdio la sesion.', 'error');
+        setStatus(tr('connectionClosed'), 'error');
       };
 
       channel.onmessage = (event) => {
@@ -691,7 +1141,7 @@
             state.roomData.closedReason = msg.reason || 'closed';
           }
           render();
-          setStatus('La sala se cerro.', 'warn');
+          setStatus(tr('roomClosed'), 'warn');
         }
       };
     }
@@ -699,30 +1149,36 @@
     async function startJoinByCode(code) {
       const roomCode = normalizeRoomCode(code);
       if (roomCode.length < 5) {
-        setStatus('Introduce un codigo valido (minimo 5 caracteres).', 'error');
+        setStatus(tr('invalidCode'), 'error');
+        return;
+      }
+      try {
+        await ensureFirebaseAuth();
+      } catch {
+        setStatus(tr('secureAuthError'), 'error');
         return;
       }
 
       leaveRoom(false);
       state.roomCode = roomCode;
       ui.roomCode.value = roomCode;
-      ui.pillRoom.textContent = 'Sala ' + roomCode;
+      ui.pillRoom.textContent = tr('roomPill', { roomCode });
       hide(ui.pillRoom, false);
       ui.btnLeave.disabled = false;
       updateJoinVisibility();
-      setStatus('Buscando sala ' + roomCode + '...');
+      setStatus(tr('searchingRoom', { roomCode }));
 
       const roomRef = doc(db, 'party_rooms', roomCode);
       const snap = await getDoc(roomRef);
       if (!snap.exists()) {
         leaveRoom(false);
-        setStatus('No existe una sala activa con ese codigo.', 'error');
+        setStatus(tr('noActiveRoom'), 'error');
         return;
       }
 
       state.roomSignalUnsub = onSnapshot(roomRef, (roomSnap) => {
         if (!roomSnap.exists()) {
-          setStatus('La sala ya no existe.', 'error');
+          setStatus(tr('roomNoLongerExists'), 'error');
           return;
         }
 
@@ -733,13 +1189,13 @@
             state.roomData.closedReason = 'closed';
           }
           render();
-          setStatus('La sala fue cerrada por el host.', 'warn');
+          setStatus(tr('roomClosedByHost'), 'warn');
         }
 
         const activeOffer = String(data.activeOffer || '').trim();
         const offerData = parseOfferPayload(activeOffer);
         if (!offerData) {
-          if (!state.connected) setStatus('Esperando invitacion del host...');
+          if (!state.connected) setStatus(tr('waitingInvite'));
           return;
         }
 
@@ -747,7 +1203,7 @@
         if (state.connected || state.joining || state.attemptedOfferFingerprint === fingerprint) return;
         void joinWithOffer(activeOffer);
       }, (error) => {
-        setStatus('Error observando la sala: ' + (error?.message || 'desconocido'), 'error');
+        setStatus(tr('watchRoomError', { error: error?.message || 'unknown' }), 'error');
       });
     }
 
@@ -761,10 +1217,10 @@
       try {
         state.channel.send(JSON.stringify({ type: 'vote', choice, roundIndex }));
         state.localVotedRounds.add(roundIndex);
-        ui.votedHint.textContent = 'Voto enviado.';
+        ui.votedHint.textContent = tr('voteSent');
         render();
       } catch {
-        setStatus('No se pudo enviar el voto.', 'error');
+        setStatus(tr('voteSendError'), 'error');
       }
     }
 
@@ -775,7 +1231,7 @@
       try {
         state.channel.send(JSON.stringify({ type: 'reaction', reaction }));
       } catch {
-        setStatus('No se pudo enviar la reaccion.', 'error');
+        setStatus(tr('reactionSendError'), 'error');
       }
     }
 
@@ -796,9 +1252,9 @@
         hide(ui.questionCard, true);
         hide(ui.resultsCard, true);
         hide(ui.finishedCard, true);
-        ui.pillPhase.textContent = 'Esperando inicio';
-        ui.pillPlayers.textContent = 'Jugadores: 0';
-        ui.pillVotes.textContent = 'Votos: 0';
+        ui.pillPhase.textContent = tr('waitingStart');
+        ui.pillPlayers.textContent = tr('players') + ': 0';
+        ui.pillVotes.textContent = tr('votes') + ': 0';
         ui.rcWow.textContent = '0';
         ui.rcHeart.textContent = '0';
         ui.rcLaugh.textContent = '0';
@@ -809,16 +1265,16 @@
       }
 
       updateJoinVisibility();
-      ui.pillPlayers.textContent = 'Jugadores: ' + (Array.isArray(state.players) ? state.players.length : 0);
-      ui.pillVotes.textContent = 'Votos: ' + (state.votesCount || 0);
+      ui.pillPlayers.textContent = tr('players') + ': ' + (Array.isArray(state.players) ? state.players.length : 0);
+      ui.pillVotes.textContent = tr('votes') + ': ' + (state.votesCount || 0);
 
       const phase = data.status || 'lobby';
       ui.pillPhase.textContent =
-        phase === 'question' ? 'En pregunta' :
-        phase === 'results' ? 'Resultados' :
-        phase === 'finished' ? 'Finalizada' :
-        phase === 'closed' ? 'Cerrada' :
-        'Lobby';
+        phase === 'question' ? tr('phaseQuestion') :
+        phase === 'results' ? tr('phaseResults') :
+        phase === 'finished' ? tr('phaseFinished') :
+        phase === 'closed' ? tr('phaseClosed') :
+        tr('phaseLobby');
       ui.pillPhase.className =
         phase === 'closed' ? 'pill danger' :
         phase === 'finished' ? 'pill ok' :
@@ -843,11 +1299,11 @@
       if (phase === 'question') {
         ui.roundNow.textContent = String((data.roundIndex || 0) + 1);
         ui.roundTotal.textContent = String(data.totalRounds || 10);
-        ui.questionText.textContent = String(data.questionText || '...');
+        ui.questionText.textContent = String(data.questionText || tr('waitingQuestion'));
         const voted = state.localVotedRounds.has(data.roundIndex);
         ui.btnYes.disabled = voted;
         ui.btnNo.disabled = voted;
-        ui.votedHint.textContent = voted ? 'Ya votaste en esta ronda.' : '';
+        ui.votedHint.textContent = voted ? tr('votedInRound') : '';
       }
 
       if (phase === 'results') {
@@ -860,20 +1316,20 @@
       if (phase === 'finished') {
         const rows = Array.isArray(data.roundSummaries) ? data.roundSummaries : [];
         if (rows.length === 0) {
-          ui.summaryList.innerHTML = '<div class="summary-item muted">No hay resumen disponible.</div>';
+          ui.summaryList.innerHTML = '<div class="summary-item muted">' + tr('summaryUnavailable') + '</div>';
         } else {
           ui.summaryList.innerHTML = rows.map((row) => (
             '<div class="summary-item">' +
-              '<div class="muted">Ronda ' + Number(row.roundNumber || 0) + '</div>' +
+              '<div class="muted">' + tr('summaryRound', { round: Number(row.roundNumber || 0) }) + '</div>' +
               '<div style="margin:4px 0 6px;font-weight:700;">' + escapeHtml(String(row.questionText || '')) + '</div>' +
-              '<div class="muted">Si: ' + Number(row.yes || 0) + ' | No: ' + Number(row.no || 0) + ' | No votado: ' + Number(row.notVoted || 0) + '</div>' +
+              '<div class="muted">' + tr('summaryStats', { yes: Number(row.yes || 0), no: Number(row.no || 0), notVoted: Number(row.notVoted || 0) }) + '</div>' +
             '</div>'
           )).join('');
         }
       }
 
       if (phase === 'closed') {
-        setStatus('Sala cerrada por el host.', 'warn');
+        setStatus(tr('roomClosedStatus'), 'warn');
       }
     }
 
@@ -884,7 +1340,7 @@
         return;
       }
       const secs = Math.max(0, Math.ceil((Number(data.questionDeadlineAt) - Date.now()) / 1000));
-      ui.pillTimer.textContent = 'Tiempo: ' + secs + 's';
+      ui.pillTimer.textContent = tr('timer', { secs });
       hide(ui.pillTimer, false);
     }
 
@@ -917,9 +1373,13 @@
     });
 
     setInterval(updateTimer, 300);
+    applyStaticTexts();
     setConnectedUI(false);
     render();
     void loadRtcConfigFromFeatureFlags();
+    void ensureFirebaseAuth().catch(() => {
+      setStatus(tr('authReloadError'), 'error');
+    });
 
     const params = new URLSearchParams(window.location.search);
     const autoCode = normalizeRoomCode(params.get('party') || '');
@@ -927,14 +1387,9 @@
       ui.roomCode.value = autoCode;
       void startJoinByCode(autoCode);
     } else {
-      setStatus('Listo. Introduce el codigo de partida para unirte.');
+      setStatus(tr('readyPrompt'));
     }
   </script>
 </body>
 </html>
-
-
-
-
-
 
