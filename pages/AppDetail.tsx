@@ -154,20 +154,19 @@ export const AppDetail: React.FC = () => {
                 )}
               </div>
 
-              <div className="mt-8 pt-8 border-t border-orange-200">
-                <h3 className="font-bold text-gray-900 mb-4">Características</h3>
-                <ul className="space-y-3">
-                  <li className="flex items-center text-gray-600">
-                    <Star size={16} className="text-orange-500 mr-2" /> Multijugador offline
-                  </li>
-                  <li className="flex items-center text-gray-600">
-                    <Star size={16} className="text-orange-500 mr-2" /> Modo normal y +18
-                  </li>
-                  <li className="flex items-center text-gray-600">
-                    <Star size={16} className="text-orange-500 mr-2" /> +300 frases
-                  </li>
-                </ul>
-              </div>
+              {app.features && app.features.length > 0 && (
+                <div className="mt-8 pt-8 border-t border-orange-200">
+                  <h3 className="font-bold text-gray-900 mb-4">Características</h3>
+                  <ul className="space-y-3">
+                    {app.features.map((feature, index) => (
+                      <li key={index} className="flex items-start text-gray-600">
+                        <Star size={16} className="text-orange-500 mr-2 mt-1 flex-shrink-0" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
 

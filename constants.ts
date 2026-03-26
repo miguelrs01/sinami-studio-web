@@ -26,7 +26,7 @@ export const APPS: App[] = [
     title: "Yo Nunca",
     description: "El juego de beber definitivo para tus fiestas.",
     longDescription: "¿Crees conocer a tus amigos? 'Yo Nunca' es la aplicación esencial para animar cualquier reunión, fiesta o previa. Descubre secretos inconfesables, ríe sin parar y rompe el hielo con cientos de preguntas picantes y divertidas. Diseñado con una interfaz vibrante y fácil de usar para que solo te preocupes de llenar tu vaso.",
-    thumbnailUrl: `https://play-lh.googleusercontent.com/_4ACHU0CaAC0Isw-q9aMUQMs3dBCec-JstegoKjKHs4eMdsbgcgMMWoXr-mK1jsG0R7o4_z5SLVyGiH-wk1d7_g=w480-h960`, 
+    thumbnailUrl: `https://play-lh.googleusercontent.com/_4ACHU0CaAC0Isw-q9aMUQMs3dBCec-JstegoKjKHs4eMdsbgcgMMWoXr-mK1jsG0R7o4_z5SLVyGiH-wk1d7_g=w480-h960`,
     heroUrl: `https://play-lh.googleusercontent.com/_4ACHU0CaAC0Isw-q9aMUQMs3dBCec-JstegoKjKHs4eMdsbgcgMMWoXr-mK1jsG0R7o4_z5SLVyGiH-wk1d7_g=w480-h960`,
     screenshots: [
       `https://play-lh.googleusercontent.com/9SNvkbT9RuCyEmKKgfv0873unHH8TdIWtQa4fJdRpmVan17IsjjX1Vi5RgUQf3Fj1tdhH8NiU0nHGkTapWcXEA=w1052-h592-rw`,
@@ -39,14 +39,19 @@ export const APPS: App[] = [
     appLink: "https://play.google.com/store/apps/details?id=com.mrodr.yonunca", // Android
     appIosLink: "",
     appWebLink: "https://sinamistudio.com/apps/yo-nunca/play-party/", // Web
-    comingSoon: false
+    comingSoon: false,
+    features: [
+      "Multijugador offline y online",
+      "Modo normal, +18, por rondas y party con amigos",
+      "+300 frases"
+    ]
   },
-    {
+  {
     id: "lo-digo",
     title: "¿Lo digo?",
     description: "El juego para saber que opinan tus amigos sobre tí.",
     longDescription: "¿Crees saber como te ven tus amigos? Descubre la realidad jugando a nuestro nuevo juego '¿Lo digo?' donde tus amigos y tú podreís confesar que es lo que opinais unos de otros, romped el hielo y aventuraros a pasar un buen rato juntos.",
-    thumbnailUrl: `https://play-lh.googleusercontent.com/eSnNX6V5QlSzusqv96ffq8El43qSF1Ii1tjJvyIdtq40e-oYa_qSz0nZsVh3hSY-a7GvNCj5uqhgNcO951AfuQ=w240-h480-rw`, 
+    thumbnailUrl: `https://play-lh.googleusercontent.com/eSnNX6V5QlSzusqv96ffq8El43qSF1Ii1tjJvyIdtq40e-oYa_qSz0nZsVh3hSY-a7GvNCj5uqhgNcO951AfuQ=w240-h480-rw`,
     heroUrl: `https://play-lh.googleusercontent.com/eSnNX6V5QlSzusqv96ffq8El43qSF1Ii1tjJvyIdtq40e-oYa_qSz0nZsVh3hSY-a7GvNCj5uqhgNcO951AfuQ=w240-h480-rw`,
     screenshots: [
       'https://play-lh.googleusercontent.com/ebprsLiCAbxA6nqKkmoPY-rsH-7FH1u6iN8WiFDcA7yLvBgl0odQV4_XQt2nJ0DPuXeqgnNTPDGIeHxhK59DsX8=w1052-h592-rw',
@@ -61,14 +66,20 @@ export const APPS: App[] = [
     appLink: "https://play.google.com/store/apps/details?id=com.sinami.lodigo", // Android
     appIosLink: "https://apps.apple.com/us/app/lo-digo/id6757181330",
     appWebLink: "", // Web
-    comingSoon: false
+    comingSoon: false,
+    features: [
+      "Multijugador offline",
+      "Descubre qué opinan tus amigos sobre ti",
+      "Modo de juego normal y +18",
+      "+150 frases únicas"
+    ]
   },
   {
     id: "housezen",
     title: "HouseZen",
     description: "Organizador de tareas compartidas del hogar.",
     longDescription: "",
-    thumbnailUrl: `https://play-lh.googleusercontent.com/0dYOQ4i8pktiNFD7-B_XmzqQXAsPOmBmj_RUEwySEK6vtH4pjSb8H89QC_WYNZXYcmle8e0B3tPY-tTOigUEEQ=w480-h960-rw`, 
+    thumbnailUrl: `https://play-lh.googleusercontent.com/0dYOQ4i8pktiNFD7-B_XmzqQXAsPOmBmj_RUEwySEK6vtH4pjSb8H89QC_WYNZXYcmle8e0B3tPY-tTOigUEEQ=w480-h960-rw`,
     heroUrl: `https://play-lh.googleusercontent.com/0dYOQ4i8pktiNFD7-B_XmzqQXAsPOmBmj_RUEwySEK6vtH4pjSb8H89QC_WYNZXYcmle8e0B3tPY-tTOigUEEQ=w480-h960-rw`,
     screenshots: [],
     platform: ["Android", "iOS", "Web"],
@@ -76,7 +87,12 @@ export const APPS: App[] = [
     appLink: "", // Android
     appIosLink: "",
     appWebLink: "", // Web
-    comingSoon: true
+    comingSoon: true,
+    features: [
+      "Organización y asignación de tareas compartidas",
+      "Seguimiento y notificaciones personalizadas",
+      "Estadísticas para un hogar más equitativo"
+    ]
   }
 ];
 

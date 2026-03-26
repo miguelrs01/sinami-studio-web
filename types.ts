@@ -14,6 +14,7 @@ export interface App {
   appIosLink?: string; // Link to play or download on IOS
   appWebLink?: string; // Link to play or download on Web
   comingSoon?: boolean;
+  features?: string[]; // Características específicas de cada app
 }
 
 export interface TeamMember {
