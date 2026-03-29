@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8" />
@@ -358,7 +358,7 @@
 
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
-    import { getFirestore, doc, getDoc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+    import { getFirestore, addDoc, collection, doc, getDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
     import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
 
     const FIREBASE_CONFIG = {
@@ -806,6 +806,36 @@
       ],
     };
 
+    function buildStunFallbackServers(primaryProvider) {
+      const selected = STUN_PRESETS[primaryProvider] ? primaryProvider : 'google';
+      const ordered = [
+        ...STUN_PRESETS[selected],
+        ...Object.entries(STUN_PRESETS)
+          .filter(([provider]) => provider !== selected)
+          .flatMap(([, servers]) => servers),
+      ];
+
+      const seen = new Set();
+      const deduped = [];
+
+      ordered.forEach((server) => {
+        const rawUrls = Array.isArray(server.urls) ? server.urls : [server.urls];
+        const urls = rawUrls.map((entry) => String(entry || '').trim()).filter((entry) => entry.length > 0);
+        if (urls.length === 0) return;
+
+        const fingerprint = urls.join('|');
+        if (seen.has(fingerprint)) return;
+        seen.add(fingerprint);
+
+        deduped.push({
+          ...server,
+          urls: urls.length === 1 ? urls[0] : urls,
+        });
+      });
+
+      return deduped;
+    }
+
     const PLAYER_STORAGE_KEY = 'party_web_player_id_v1';
     const app = initializeApp(FIREBASE_CONFIG);
     const db = getFirestore(app);
@@ -864,7 +894,7 @@
       connected: false,
       joining: false,
       rtcConfiguration: {
-        iceServers: [...STUN_PRESETS.google],
+        iceServers: buildStunFallbackServers('google'),
         iceTransportPolicy: 'all',
       },
       roomSignalUnsub: null,
@@ -1020,7 +1050,7 @@
         const providerRaw = String(data.party_stun_provider || 'google').trim().toLowerCase();
         const provider = STUN_PRESETS[providerRaw] ? providerRaw : 'google';
         state.rtcConfiguration = {
-          iceServers: [...STUN_PRESETS[provider]],
+          iceServers: buildStunFallbackServers(provider),
           iceTransportPolicy: 'all',
         };
       } catch {}
@@ -1084,7 +1114,7 @@
           answer: pc.localDescription || answer,
         };
 
-        await setDoc(doc(db, 'party_rooms', offerData.roomCode, 'answers', offerData.connectionId), {
+        await addDoc(collection(db, 'party_rooms', offerData.roomCode, 'answers'), {
           connectionId: offerData.connectionId,
           clientPlayerId: state.playerId,
           clientAuthUid,
@@ -1392,4 +1422,3 @@
   </script>
 </body>
 </html>
-
