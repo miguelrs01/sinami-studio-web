@@ -128,7 +128,7 @@
 
   <script type="module">
     const CFG={apiKey:"AIzaSyBx7eIcSrFFQ-TAaGM1DQJ1GNcHc1wDHkg",authDomain:"yo-nunca-85b0c.firebaseapp.com",projectId:"yo-nunca-85b0c",databaseURL:"https://yo-nunca-85b0c-default-rtdb.europe-west1.firebasedatabase.app",storageBucket:"yo-nunca-85b0c.firebasestorage.app",messagingSenderId:"814751987159",appId:"1:814751987159:web:5849912e1b43a82899c792"};
-    const TOTAL=10,VOTE_SECONDS=20,QUEUE="party_queue",QUEUE_STALE=45000,QUEUE_HEART=15000,QUEUE_RETRY=4000,ACTIVE_SLOTS=99,PLAYER_KEY="party_web_player_id_v2",CLIENT_KEY="party_web_client_player_id_v2";
+    const TOTAL=10,VOTE_SECONDS=20,QUEUE="party_queue",QUEUE_STALE=45000,QUEUE_HEART=15000,QUEUE_RETRY=4000,ACTIVE_SLOTS=99,PLAYER_KEY="party_web_player_id_v2",CLIENT_KEY="party_web_client_player_id_v2",ROOM_LOOKUP_ATTEMPTS=12,ROOM_LOOKUP_RETRY_MS=500;
 
     const i18n={'es':{eyebrow:'Modo party online',pillConn:'Sin conectar',pillConnected:'Conectado a Firebase',label_roomCode:'Codigo de sala',hint_roomCode:'Añade el codigo de la sala para unirte',btn_join:'Unirse a la sala',footer_presence:'Tu presencia se publica en Firebase mientras la sala siga viva. Si cierras esta pagina, se limpia automaticamente.',btn_leave:'Salir de la sala',download_title:'Descarga la app',download_desc:'Si quieres crear salas o jugar tambien desde la app nativa puedes descargarla aquí.',store_google:'Google Play',store_appstore:'App Store (próximamente)'},'en':{eyebrow:'Party mode online',pillConn:'Not connected',pillConnected:'Connected to Firebase',label_roomCode:'Room code',hint_roomCode:'Add the room code to join',btn_join:'Join room',footer_presence:'Your presence is published in Firebase while the room is active. If you close this page, it will be cleaned up automatically.',btn_leave:'Leave room',download_title:'Download the app',download_desc:'If you want to create rooms or play from the native app, you can download it here.',store_google:'Google Play',store_appstore:'App Store coming soon'},'fr':{eyebrow:'Mode party en ligne',pillConn:'Non connecté',pillConnected:'Connecté à Firebase',label_roomCode:'Code de la salle',hint_roomCode:'Ajouter le code de la salle pour rejoindre',btn_join:'Rejoindre la salle',footer_presence:'Votre présence est publiée dans Firebase tant que la salle est active. Si vous fermez cette page, elle sera nettoyée automatiquement.',btn_leave:'Quitter la salle',download_title:'Télécharger l\'app',download_desc:'Si vous voulez créer des salles ou jouer depuis l\'app native, vous pouvez la télécharger ici.',store_google:'Google Play',store_appstore:'App Store bientôt'},'de':{eyebrow:'Party-Modus online',pillConn:'Nicht verbunden',pillConnected:'Mit Firebase verbunden',label_roomCode:'Zimmernummer',hint_roomCode:'Fügen Sie den Zimmernummer hinzu, um den Raum beizutreten',btn_join:'Raum beitreten',footer_presence:'Ihre Anwesenheit wird in Firebase veröffentlicht, während der Raum aktiv ist. Wenn Sie diese Seite schließen, wird sie automatisch bereinigt.',btn_leave:'Raum verlassen',download_title:'App herunterladen',download_desc:'Wenn Sie Zimmer erstellen oder aus der nativen App spielen möchten, können Sie diese hier herunterladen.',store_google:'Google Play',store_appstore:'App Store kommt bald'},'pt':{eyebrow:'Modo party online',pillConn:'Não conectado',pillConnected:'Conectado ao Firebase',label_roomCode:'Código da sala',hint_roomCode:'Adicione o código da sala para entrar',btn_join:'Entrar na sala',footer_presence:'Sua presença é publicada no Firebase enquanto a sala estiver ativa. Se você fechar esta página, ela será limpa automaticamente.',btn_leave:'Sair da sala',download_title:'Baixar o app',download_desc:'Se você quer criar salas ou jogar também do app nativo, você pode baixá-lo aqui.',store_google:'Google Play',store_appstore:'App Store em breve'},'it':{eyebrow:'Modalità party online',pillConn:'Non connesso',pillConnected:'Connesso a Firebase',label_roomCode:'Codice della stanza',hint_roomCode:'Aggiungi il codice della stanza per entrare',btn_join:'Entra nella stanza',footer_presence:'La tua presenza è pubblicata su Firebase mentre la stanza è attiva. Se chiudi questa pagina, verrà pulita automaticamente.',btn_leave:'Esci dalla stanza',download_title:'Scarica l\'app',download_desc:'Se vuoi creare stanze o giocare anche dall\'app nativa, puoi scaricarla qui.',store_google:'Google Play',store_appstore:'App Store presto'}}
     const getLang=()=>{
@@ -278,6 +278,16 @@
     }
 
     async function reserveSlot(authUid,code,playerId,role){if(await trySlot(authUid,code,playerId,role))return;status('Servidores ocupados. Entrando en cola virtual...','warn');await waitQueue(authUid,code,playerId,role)}
+    async function fetchRoomMetaWithRetry(code){
+      for(let attempt=1;attempt<=ROOM_LOOKUP_ATTEMPTS;attempt+=1){
+        const roomSnap=await get(ref(rtdb,meta(code)));
+        if(roomSnap.exists()) return roomSnap;
+        if(attempt<ROOM_LOOKUP_ATTEMPTS){
+          await new Promise((resolve)=>window.setTimeout(resolve,ROOM_LOOKUP_RETRY_MS));
+        }
+      }
+      throw new Error('No existe una sala activa con ese codigo.');
+    }
     async function upsertPlayer(code,playerId,authUid){await set(ref(rtdb,playerPath(code,playerId)),{id:playerId,isHost:false,online:true,authUid,updatedAt:Date.now()})}
 
     function render(){
@@ -335,8 +345,7 @@
         state.roomCode = code;
         joinVisibility();
         const authUid = await ensureAuth();
-        const roomSnap = await get(ref(rtdb, meta(code)));
-        if (!roomSnap.exists()) throw new Error('No existe una sala activa con ese codigo.');
+        const roomSnap = await fetchRoomMetaWithRetry(code);
         const d = roomData(roomSnap.val(), code);
         if (d.status === 'closed') throw new Error('La sala esta cerrada.');
         if (d.transport && d.transport !== 'rtdb') throw new Error('La sala no usa el modo Firebase compatible con esta pagina.');
