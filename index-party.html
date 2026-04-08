@@ -1,1424 +1,416 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Yo Nunca - Modo Party</title>
-  <meta name="description" content="Unete a una sala Party Online con codigo y juega desde tu navegador." />
+  <title>Yo Nunca Party - Unirse a sala</title>
+  <meta name="description" content="Unete a una sala party de Yo Nunca y juega en tiempo real con Firebase." />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
-    :root {
-      --bg: #060a16;
-      --text: #edf3ff;
-      --muted: #9fb2d9;
-      --card: #0f172a;
-      --card-2: #1e293b;
-      --border: #334155;
-      --accent: #06b6d4;
-      --accent-2: #38bdf8;
-      --danger: #ef4444;
-      --ok: #48d871;
-      --warn: #f7be5c;
-    }
-
-    * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; }
-
-    body {
-      min-height: 100vh;
-      color: var(--text);
-      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background:
-        radial-gradient(1200px 600px at 0% -10%, #17356c 0%, transparent 55%),
-        radial-gradient(1200px 580px at 100% 0%, #39206d 0%, transparent 48%),
-        radial-gradient(700px 340px at 50% 100%, #0b4c5f 0%, transparent 65%),
-        var(--bg);
-    }
-
-    .wrap {
-      width: min(980px, 100%);
-      margin: 0 auto;
-      padding: 20px 16px 56px;
-      display: grid;
-      gap: 14px;
-    }
-
-    .card {
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
-      box-shadow: 0 12px 42px rgba(0,0,0,.3);
-      backdrop-filter: blur(8px);
-      padding: 16px;
-    }
-
-    .hero h1 {
-      margin: 0 0 8px;
-      font-size: clamp(1.4rem, 4vw, 2rem);
-      letter-spacing: .02em;
-      color: #e2f3ff;
-    }
-
-    .sub {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.45;
-      max-width: 70ch;
-    }
-
-    .row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .join-grid {
-      display: grid;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .muted { color: var(--muted); }
-
-    .mono {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      letter-spacing: .15em;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-
-    input {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: #0b1324;
-      color: var(--text);
-      padding: 12px 14px;
-      font-size: 1.15rem;
-      outline: none;
-    }
-
-    input:focus {
-      border-color: var(--accent-2);
-      box-shadow: 0 0 0 3px rgba(56,189,248,.2);
-    }
-
-    button {
-      appearance: none;
-      border: 1px solid transparent;
-      border-radius: 10px;
-      padding: 10px 14px;
-      color: #fff;
-      font-weight: 800;
-      cursor: pointer;
-      transition: transform .08s ease, opacity .2s ease, filter .2s ease;
-    }
-
-    button:hover { filter: brightness(1.08); }
-    button:active { transform: translateY(1px); }
-    button[disabled] { opacity: .45; cursor: not-allowed; }
-
-    .btn-main { background: linear-gradient(90deg, #06b6d4, #3b82f6); }
-    .btn-danger { background: linear-gradient(90deg, #ef4444, #f43f5e); }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: #0f1a33;
-      color: var(--muted);
-      padding: 6px 10px;
-      font-size: .82rem;
-      font-weight: 700;
-      letter-spacing: .01em;
-    }
-
-    .pill.ok {
-      color: #b8ffd0;
-      border-color: rgba(72,216,113,.45);
-      background: rgba(72,216,113,.12);
-    }
-
-    .pill.warn {
-      color: #ffe2ad;
-      border-color: rgba(247,190,92,.45);
-      background: rgba(247,190,92,.12);
-    }
-
-    .pill.danger {
-      color: #ffc3cb;
-      border-color: rgba(255,93,108,.45);
-      background: rgba(255,93,108,.12);
-    }
-
-    .status-line {
-      margin-top: 8px;
-      min-height: 1.35em;
-      font-size: .95rem;
-    }
-
-    .panel {
-      display: grid;
-      gap: 14px;
-    }
-
-    .big-question {
-      font-size: clamp(1.1rem, 3.2vw, 1.45rem);
-      line-height: 1.35;
-      margin: 8px 0 16px;
-      font-weight: 800;
-    }
-
-    .question-prefix {
-      margin-top: 8px;
-      font-weight: 800;
-      letter-spacing: .08em;
-      color: #22d3ee;
-      text-transform: uppercase;
-      font-size: .9rem;
-    }
-
-    .vote-grid {
-      display: grid;
-      gap: 10px;
-      grid-template-columns: 1fr;
-    }
-
-    .vote-yes { background: linear-gradient(90deg, #ff5f76, #ff3e62); }
-    .vote-no { background: linear-gradient(90deg, #3ccf87, #2fae70); }
-
-    .result-grid {
-      display: grid;
-      gap: 10px;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .result-box {
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: var(--card-2);
-      padding: 10px;
-      text-align: center;
-    }
-
-    .result-box .n {
-      display: block;
-      font-size: 1.5rem;
-      font-weight: 800;
-      margin-top: 4px;
-    }
-
-    .reactions {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .react-btn {
-      background: #24365f;
-      border: 1px solid #324974;
-      font-size: 1.05rem;
-      padding: 10px 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .react-count {
-      display: inline-flex;
-      min-width: 24px;
-      justify-content: center;
-      align-items: center;
-      border-radius: 999px;
-      padding: 2px 8px;
-      font-size: .78rem;
-      font-weight: 800;
-      color: #cfe2ff;
-      background: rgba(255,255,255,.1);
-      border: 1px solid rgba(255,255,255,.13);
-    }
-
-    .summary-list {
-      max-height: 38vh;
-      overflow: auto;
-      display: grid;
-      gap: 8px;
-      padding-right: 4px;
-    }
-
-    .summary-item {
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: #13203c;
-      padding: 10px;
-    }
-
-    .room-footer {
-      margin-top: 2px;
-    }
-
-    .hide { display: none !important; }
-
-    @media (max-width: 640px) {
-      .result-grid { grid-template-columns: 1fr; }
-    }
+    :root{color-scheme:dark;--bg:#07111f;--card:rgba(10,23,42,.86);--line:rgba(103,232,249,.18);--text:#effaff;--muted:#97acc6;--accent:#67e8f9;--ok:#34d399;--warn:#f59e0b;--danger:#fb7185;--radius:22px;--shadow:0 24px 80px rgba(0,0,0,.42)}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%}body{font-family:"Segoe UI",Arial,sans-serif;color:var(--text);background:radial-gradient(circle at top left,rgba(103,232,249,.18),transparent 32%),radial-gradient(circle at bottom right,rgba(244,114,182,.12),transparent 28%),linear-gradient(180deg,#08111e,#07111f);padding:max(16px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
+    .shell{width:min(980px,100%);margin:0 auto;display:grid;gap:16px}.card{background:linear-gradient(180deg,rgba(14,27,49,.96),rgba(8,18,33,.94));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}.hero,.panel,.download{padding:20px}.top{display:flex;gap:16px;align-items:center}.logo{width:110px;height:110px;border-radius:24px;display:grid;place-items:center;border:none;background:none}.logo img{width:100px;height:100px;border-radius:20px}.eyebrow{margin:0 0 6px;font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}h1,h2{margin:0}h1{font-size:clamp(1.8rem,4vw,3rem);line-height:1}h2{font-size:clamp(1.15rem,3vw,1.5rem)}p{margin:0}.sub,.copy,.hint,.muted{color:var(--muted);line-height:1.5}.sub{margin-top:10px}.pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.pill{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 14px;border-radius:999px;border:1px solid rgba(148,163,184,.18);background:rgba(15,23,42,.55);color:#cde4ff;font-size:.9rem}.pill.ok{border-color:rgba(52,211,153,.34);background:rgba(6,78,59,.28);color:#b8ffd9}.pill.warn{border-color:rgba(245,158,11,.34);background:rgba(120,53,15,.25);color:#fde7b1}.pill.danger{border-color:rgba(251,113,133,.32);background:rgba(127,29,29,.28);color:#ffd5dc}.join{display:grid;gap:14px;margin-top:20px;padding:18px;border-radius:18px;background:rgba(6,16,31,.58);border:1px solid rgba(103,232,249,.1)}label{font-size:.84rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase}.inputRow{display:grid;grid-template-columns:1fr;gap:10px;align-items:center;padding:8px 10px 8px 14px;border-radius:16px;border:1px solid rgba(103,232,249,.2);background:rgba(7,17,31,.74)}.inputRow:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px rgba(34,211,238,.12)}input{width:100%;min-width:0;padding:6px 0;border:0;outline:0;background:transparent;color:var(--text);font-size:clamp(1rem,3vw,1.15rem);font-weight:800;text-transform:uppercase;letter-spacing:.28em}input::placeholder{color:rgba(149,172,198,.58)}.actions,.footer,.stores,.votes,.reacts{display:flex;flex-wrap:wrap;gap:12px}.stats{display:flex;gap:12px}.btn{min-height:48px;padding:12px 18px;border-radius:14px;border:0;cursor:pointer;font-weight:800;letter-spacing:.04em;transition:transform .16s ease,opacity .16s ease}.btn:hover:not(:disabled){transform:translateY(-1px)}.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}.primary{background:linear-gradient(135deg,#67e8f9,#22d3ee);color:#04131f;box-shadow:0 4px 16px rgba(103,232,249,.24);font-size:1.05rem;min-height:56px;padding:14px 28px;border-radius:12px}.primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px rgba(103,232,249,.36)}.primary:active:not(:disabled){transform:translateY(0px)}.ghost{background:rgba(17,24,39,.72);color:var(--text);border:1px solid rgba(103,232,249,.16)}.danger{background:rgba(127,29,29,.42);color:#ffe7ec;border:1px solid rgba(251,113,133,.2)}#btnYes{background:rgba(34,197,94,.8);color:#fff;text-align:center}#btnNo{background:rgba(239,68,68,.8);color:#fff;text-align:center}.status{margin-top:16px;padding:14px 16px;border-radius:16px;border:1px solid rgba(103,232,249,.16);background:rgba(12,26,48,.68);line-height:1.5;font-size:.92rem}.status.success{border-color:rgba(52,211,153,.32);background:rgba(6,78,59,.3);color:#b9ffdd}.status.error{border-color:rgba(251,113,133,.3);background:rgba(127,29,29,.28);color:#ffd5dc}.status.warn{border-color:rgba(245,158,11,.28);background:rgba(120,53,15,.3);color:#ffe7bb}.footer{align-items:center;justify-content:space-between;margin-top:18px;padding-top:16px;border-top:1px solid rgba(103,232,249,.1)}.stats{margin-top:18px}.stat{flex:1 1 160px;padding:16px;border-radius:16px;border:1px solid rgba(103,232,249,.12);background:rgba(10,24,45,.74)}.stat b{display:block;margin-top:6px;font-size:1.2rem}#resultsCard .stat{padding:12px}#resultsCard .stat b{font-size:1.2rem;margin-top:4px}.si{color:#22c55e}.no{color:#ef4444}.sin-votar{color:#6b7280}.questionShell,.summaryItem{padding:18px;border-radius:18px;border:1px solid rgba(103,232,249,.12);background:rgba(10,24,45,.74)}.meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}.question{font-size:clamp(1.35rem,4vw,1.95rem);line-height:1.24;font-weight:800}#yoNuncaText{color:#1e40af;font-weight:700;font-size:0.8em}.votes button{flex:1 1 220px;text-align:left;min-height:64px}.votes strong{display:block;margin-bottom:4px;font-size:1rem}.votes span,.voteHint{font-size:.92rem;color:var(--muted)}.voteHint{min-height:1.4em;margin-top:10px}.reacts{margin-top:18px;display:flex;gap:12px}.react{flex:1 1 92px;display:flex;align-items:center;justify-content:center;gap:4px;min-height:72px;background:rgba(9,23,42,.78);color:var(--text);border:1px solid rgba(103,232,249,.14);font-size:1.2rem}.react.active{background:rgba(217,70,239,.18);border-color:rgba(244,114,182,.7);box-shadow:0 0 0 1px rgba(244,114,182,.24) inset}.summary{display:grid;gap:12px;margin-top:18px}.download .stores{margin-top:18px}.store{flex:1 1 220px;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:54px;padding:12px 16px;border-radius:16px;border:1px solid rgba(103,232,249,.16);background:rgba(12,26,48,.68);text-decoration:none;font-size:.95rem}.store .icon-text{display:inline-flex;align-items:center;gap:10px}.store .store-text{display:inline}.game-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding:12px 16px;border-radius:12px;background:rgba(10,23,42,.86);border:1px solid rgba(103,232,249,.18)}.room-code{font-size:.9rem;color:var(--muted)}.room-code span{font-weight:700;color:var(--text)}.hidden{display:none!important}@media (min-width:860px){.shell{grid-template-columns:minmax(0,1.08fr) minmax(320px,.92fr)}.hero,.download{grid-column:1/2}.game{grid-column:2/3;position:sticky;top:16px;align-self:start}}@media (max-width:640px){.top{align-items:flex-start}.logo{width:90px;height:90px;border-radius:18px}.logo img{width:80px;height:80px;border-radius:16px}.actions{flex-direction:row;gap:8px}.actions button{flex:1;min-height:48px;padding:10px 16px;font-size:.9rem}.stores{flex-direction:row;gap:6px}.store{flex:1 1 auto;min-height:32px;padding:4px 8px;font-size:.65rem;gap:3px}.store i{font-size:.75rem}.btn,.pill{width:100%}.game{order:3}}
   </style>
 </head>
 <body>
-  <main class="wrap">
+  <main class="shell">
     <section class="card hero">
-      <h1 id="heroTitle">Yo Nunca - Modo Party</h1>
-      <p id="heroSub" class="sub">
-        Entra con el codigo de partida que te comparta el host desde la app.
-        Esta pagina esta pensada para jugadores (no host).
-      </p>
-    </section>
-
-    <section id="joinSection" class="card">
-      <div id="joinControls">
-        <div class="join-grid">
-          <label id="roomCodeLabel" for="roomCode" class="muted">Codigo de partida</label>
-          <input id="roomCode" class="mono" maxlength="8" placeholder="EJ: A7K9Q2" autocomplete="off" />
-        </div>
-
-        <div class="row" style="margin-bottom:8px;">
-          <button id="btnJoin" class="btn-main">Unirme</button>
+      <div class="top">
+        <div class="logo"><img src="https://play-lh.googleusercontent.com/_4ACHU0CaAC0Isw-q9aMUQMs3dBCec-JstegoKjKHs4eMdsbgcgMMWoXr-mK1jsG0R7o4_z5SLVyGiH-wk1d7_g=w480-h960" alt="Yo Nunca Party" /></div>
+        <div>
+          <p class="eyebrow" data-i18n="eyebrow">Modo party online</p>
+          <h1>Yo Nunca Party</h1>
         </div>
       </div>
-
-      <div id="statusLine" class="status-line muted"></div>
+      <div class="pills">
+        <span class="pill" id="pillConn" data-i18n="pillConn">Sin conectar</span>
+        <span class="pill hidden" id="pillRoom">Sala</span>
+        <span class="pill hidden" id="pillPhase">Lobby</span>
+        <span class="pill hidden" id="pillPlayers">Jugadores: 0</span>
+        <span class="pill hidden" id="pillVotes">Votos: 0</span>
+        <span class="pill hidden" id="pillTimer">Tiempo: --s</span>
+      </div>
+      <div class="join" id="joinSection">
+        <div>
+          <label for="roomCode" data-i18n="label_roomCode">Codigo de sala</label>
+          <div class="inputRow">
+            <input id="roomCode" type="text" maxlength="8" placeholder="ABC12345" autocomplete="off" autocapitalize="characters" spellcheck="false" />
+          </div>
+          <p class="hint" data-i18n="hint_roomCode">Añade el codigo de la sala para unirte</p>
+        </div>
+        <div class="actions" id="joinControls"><button class="btn primary" id="joinButton" type="button" data-i18n="btn_join"><span class="btn-text">Unirse a la sala</span></button></div>
+      </div>
+      <div id="statusLine" class="status hidden"></div>
+      <div class="footer hidden" id="roomFooter">
+        <p class="copy" data-i18n="footer_presence">Tu presencia se publica en Firebase mientras la sala siga viva. Si cierras esta pagina, se limpia automaticamente.</p>
+        <button class="btn danger" id="btnLeave" type="button" disabled data-i18n="btn_leave">Salir de la sala</button>
+      </div>
     </section>
 
-    <section id="gamePanel" class="panel hide">
-      <article class="card">
-        <div class="row">
-          <span id="pillPhase" class="pill warn">Esperando inicio</span>
-          <span id="pillPlayers" class="pill">Jugadores: 0</span>
-          <span id="pillVotes" class="pill">Votos: 0</span>
-          <span id="pillTimer" class="pill hide"></span>
+    <section class="game hidden" id="gamePanel">
+      <div class="game-header hidden" id="gameHeader">
+        <span class="room-code">Sala: <span id="gameRoomCode"></span></span>
+        <button class="btn danger" id="btnLeaveGame" type="button">Salir de la sala</button>
+      </div>
+      <article class="card panel hidden" id="lobbyCard">
+        <h2>Esperando al host</h2>
+        <p class="copy">La sala ya esta conectada. Cuando el anfitrion inicie la partida, veras la pregunta aqui.</p>
+        <div class="stats">
+          <div class="stat"><span class="muted">Jugadores</span><b id="lobbyPlayers">0</b></div>
+          <div class="stat"><span class="muted">Rondas</span><b id="roundTotalLobby">10</b></div>
+          <div class="stat"><span class="muted">Estado</span><b id="lobbyStatus">Lobby</b></div>
         </div>
       </article>
 
-      <article id="questionCard" class="card hide">
-        <div class="muted"><span id="roundLabel">Ronda</span> <span id="roundNow">-</span>/<span id="roundTotal">-</span></div>
-        <div id="questionPrefix" class="question-prefix">YO NUNCA...</div>
-        <div class="big-question" id="questionText">Esperando pregunta...</div>
-        <div class="vote-grid">
-          <button id="btnYes" class="vote-yes">Lo he hecho</button>
-          <button id="btnNo" class="vote-no">No lo he hecho</button>
+      <article class="card panel hidden" id="questionCard">
+        <h2>Tu voto es anonimo</h2>
+        <div class="questionShell" style="margin-top:18px;">
+          <div class="meta">
+            <span class="pill warn">Ronda&nbsp; <span id="roundNow">1</span> / <span id="roundTotal">10</span></span>
+            <span class="pill" id="questionStatusPill">Pregunta activa</span>
+          </div>
+          <p class="question">
+            <span id="yoNuncaText">Yo nunca...</span><br>
+            <span id="questionPhrase">...</span>
+          </p>
         </div>
-        <div id="votedHint" class="status-line muted"></div>
+        <div class="votes" style="margin-top:18px;">
+          <button class="btn ghost" id="btnYes" type="button"><strong>Lo he hecho</strong></button>
+          <button class="btn ghost" id="btnNo" type="button"><strong>No lo he hecho</strong></button>
+        </div>
+        <p class="voteHint" id="votedHint"></p>
       </article>
-
-      <article id="resultsCard" class="card hide">
-        <div id="resultsTitle" class="muted">Resultados</div>
-        <div class="result-grid">
-          <div class="result-box">
-            <div id="resultYesLabel" class="muted">Si</div>
-            <span id="resYes" class="n" style="color:#ff8ca0;">0</span>
-          </div>
-          <div class="result-box">
-            <div id="resultNoLabel" class="muted">No</div>
-            <span id="resNo" class="n" style="color:#9ff0bd;">0</span>
-          </div>
-          <div class="result-box">
-            <div id="resultNotVotedLabel" class="muted">No votado</div>
-            <span id="resNV" class="n" style="color:#ffd98f;">0</span>
-          </div>
+      <article class="card panel hidden" id="resultsCard">
+        <h2>Resultados de la ronda</h2>
+        <p class="copy">Ya puedes reaccionar mientras el host prepara la siguiente pregunta.</p>
+        <div class="stats">
+          <div class="stat"><span class="muted si">Si:</span> <b id="resYes">0</b></div>
+          <div class="stat"><span class="muted no">No:</span> <b id="resNo">0</b></div>
+          <div class="stat"><span class="muted sin-votar">Sin votar:</span> <b id="resNV">0</b></div>
         </div>
-
-        <div id="reactionsTitle" style="margin-top:10px" class="muted">Reacciones</div>
-        <div class="reactions">
-          <button class="react-btn" data-r="wow"><span>&#128562;</span><span id="rcWow" class="react-count">0</span></button>
-          <button class="react-btn" data-r="heart"><span>&#10084;&#65039;</span><span id="rcHeart" class="react-count">0</span></button>
-          <button class="react-btn" data-r="laugh"><span>&#128514;</span><span id="rcLaugh" class="react-count">0</span></button>
-          <button class="react-btn" data-r="fire"><span>&#128293;</span><span id="rcFire" class="react-count">0</span></button>
+        <div class="reacts">
+          <button class="btn react" data-r="wow" type="button">😲 <span id="rcWow">0</span></button>
+          <button class="btn react" data-r="heart" type="button">❤️ <span id="rcHeart">0</span></button>
+          <button class="btn react" data-r="laugh" type="button">😂 <span id="rcLaugh">0</span></button>
+          <button class="btn react" data-r="fire" type="button">🔥 <span id="rcFire">0</span></button>
         </div>
       </article>
 
-      <article id="finishedCard" class="card hide">
-        <div id="finishedTitle" style="font-size:1.1rem;font-weight:800;">Partida finalizada</div>
-        <p id="finishedSubtitle" class="muted">Resumen de rondas</p>
-        <div id="summaryList" class="summary-list"></div>
+      <article class="card panel hidden" id="finishedCard">
+        <div class="summary" id="summaryList"></div>
+      </article>
+
+      <article class="card panel hidden" id="closedCard">
+        <h2>Sala cerrada</h2>
+        <p class="copy">La conexion ya no esta disponible. Puedes salir y unirte a otra sala con un codigo nuevo.</p>
       </article>
     </section>
 
-    <section id="roomFooter" class="card room-footer hide">
-      <div class="row">
-        <button id="btnLeave" class="btn-danger" disabled>Salir de sala</button>
-        <span id="pillConn" class="pill">Sin conectar</span>
-        <span id="pillRoom" class="pill hide"></span>
+    <section class="card download">
+      <p class="eyebrow" data-i18n="download_title">Descarga la app</p>
+      <p class="download-copy" data-i18n="download_desc">Si quieres crear salas o jugar tambien desde la app nativa puedes descargarla aquí.</p>
+      <div class="stores">
+        <a href="https://play.google.com/store/apps/details?id=com.mrodr.yonunca" target="_blank" rel="noreferrer" class="store" data-i18n="store_google">
+          <span class="icon-text">
+            <i class="fa-brands fa-google-play" style="color:#63e6be;"></i>
+            <span class="store-text">Google Play</span>
+          </span>
+        </a>
+        <button class="store" type="button" disabled data-i18n="store_appstore">
+          <span class="icon-text">
+            <i class="fa-brands fa-apple" style="color:#ffffff;"></i>
+            <span class="store-text">App Store (próximamente)</span>
+          </span>
+        </button>
       </div>
     </section>
   </main>
 
   <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
-    import { getFirestore, addDoc, collection, doc, getDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
-    import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+    const CFG={apiKey:"AIzaSyBx7eIcSrFFQ-TAaGM1DQJ1GNcHc1wDHkg",authDomain:"yo-nunca-85b0c.firebaseapp.com",projectId:"yo-nunca-85b0c",databaseURL:"https://yo-nunca-85b0c-default-rtdb.europe-west1.firebasedatabase.app",storageBucket:"yo-nunca-85b0c.firebasestorage.app",messagingSenderId:"814751987159",appId:"1:814751987159:web:5849912e1b43a82899c792"};
+    const TOTAL=10,VOTE_SECONDS=20,QUEUE="party_queue",QUEUE_STALE=45000,QUEUE_HEART=15000,QUEUE_RETRY=4000,ACTIVE_SLOTS=99,PLAYER_KEY="party_web_player_id_v2",CLIENT_KEY="party_web_client_player_id_v2",ROOM_LOOKUP_ATTEMPTS=12,ROOM_LOOKUP_RETRY_MS=500;
 
-    const FIREBASE_CONFIG = {
-      apiKey: 'AIzaSyBx7eIcSrFFQ-TAaGM1DQJ1GNcHc1wDHkg',
-      authDomain: 'yo-nunca-85b0c.firebaseapp.com',
-      projectId: 'yo-nunca-85b0c',
-      storageBucket: 'yo-nunca-85b0c.firebasestorage.app',
-      messagingSenderId: '814751987159',
-      appId: '1:814751987159:web:5849912e1b43a82899c792',
+    const i18n={'es':{eyebrow:'Modo party online',pillConn:'Sin conectar',pillConnected:'Conectado a Firebase',label_roomCode:'Codigo de sala',hint_roomCode:'Añade el codigo de la sala para unirte',btn_join:'Unirse a la sala',footer_presence:'Tu presencia se publica en Firebase mientras la sala siga viva. Si cierras esta pagina, se limpia automaticamente.',btn_leave:'Salir de la sala',download_title:'Descarga la app',download_desc:'Si quieres crear salas o jugar tambien desde la app nativa puedes descargarla aquí.',store_google:'Google Play',store_appstore:'App Store (próximamente)'},'en':{eyebrow:'Party mode online',pillConn:'Not connected',pillConnected:'Connected to Firebase',label_roomCode:'Room code',hint_roomCode:'Add the room code to join',btn_join:'Join room',footer_presence:'Your presence is published in Firebase while the room is active. If you close this page, it will be cleaned up automatically.',btn_leave:'Leave room',download_title:'Download the app',download_desc:'If you want to create rooms or play from the native app, you can download it here.',store_google:'Google Play',store_appstore:'App Store coming soon'},'fr':{eyebrow:'Mode party en ligne',pillConn:'Non connecté',pillConnected:'Connecté à Firebase',label_roomCode:'Code de la salle',hint_roomCode:'Ajouter le code de la salle pour rejoindre',btn_join:'Rejoindre la salle',footer_presence:'Votre présence est publiée dans Firebase tant que la salle est active. Si vous fermez cette page, elle sera nettoyée automatiquement.',btn_leave:'Quitter la salle',download_title:'Télécharger l\'app',download_desc:'Si vous voulez créer des salles ou jouer depuis l\'app native, vous pouvez la télécharger ici.',store_google:'Google Play',store_appstore:'App Store bientôt'},'de':{eyebrow:'Party-Modus online',pillConn:'Nicht verbunden',pillConnected:'Mit Firebase verbunden',label_roomCode:'Zimmernummer',hint_roomCode:'Fügen Sie den Zimmernummer hinzu, um den Raum beizutreten',btn_join:'Raum beitreten',footer_presence:'Ihre Anwesenheit wird in Firebase veröffentlicht, während der Raum aktiv ist. Wenn Sie diese Seite schließen, wird sie automatisch bereinigt.',btn_leave:'Raum verlassen',download_title:'App herunterladen',download_desc:'Wenn Sie Zimmer erstellen oder aus der nativen App spielen möchten, können Sie diese hier herunterladen.',store_google:'Google Play',store_appstore:'App Store kommt bald'},'pt':{eyebrow:'Modo party online',pillConn:'Não conectado',pillConnected:'Conectado ao Firebase',label_roomCode:'Código da sala',hint_roomCode:'Adicione o código da sala para entrar',btn_join:'Entrar na sala',footer_presence:'Sua presença é publicada no Firebase enquanto a sala estiver ativa. Se você fechar esta página, ela será limpa automaticamente.',btn_leave:'Sair da sala',download_title:'Baixar o app',download_desc:'Se você quer criar salas ou jogar também do app nativo, você pode baixá-lo aqui.',store_google:'Google Play',store_appstore:'App Store em breve'},'it':{eyebrow:'Modalità party online',pillConn:'Non connesso',pillConnected:'Connesso a Firebase',label_roomCode:'Codice della stanza',hint_roomCode:'Aggiungi il codice della stanza per entrare',btn_join:'Entra nella stanza',footer_presence:'La tua presenza è pubblicata su Firebase mentre la stanza è attiva. Se chiudi questa pagina, verrà pulita automaticamente.',btn_leave:'Esci dalla stanza',download_title:'Scarica l\'app',download_desc:'Se vuoi creare stanze o giocare anche dall\'app nativa, puoi scaricarla qui.',store_google:'Google Play',store_appstore:'App Store presto'}}
+    const getLang=()=>{
+      const p=new URLSearchParams(window.location.search).get('lang');
+      if(p&&i18n[p]) return p;
+      let navLang = '';
+      if(typeof navigator!=='undefined'){
+        navLang = navigator.language || navigator.userLanguage || (Array.isArray(navigator.languages) && navigator.languages.length > 0 ? navigator.languages[0] : '');
+      }
+      const m=(String(navLang||'').toLowerCase()).split(/[-_]/)[0];
+      return (m&&i18n[m])?m:'es';
     };
-
-    const SUPPORTED_LANGS = ['es', 'en', 'fr', 'de', 'pt', 'it'];
-    const I18N = {
-      es: {
-        pageTitle: 'Yo Nunca - Modo Party',
-        pageDescription: 'Unete a una sala Party Online con codigo y juega desde tu navegador.',
-        heroTitle: 'Yo Nunca - Modo Party',
-        heroSub: 'Entra con el codigo de partida que te comparta el host desde la app. Esta pagina esta pensada para jugadores (no host).',
-        roomCodeLabel: 'Codigo de partida',
-        joinButton: 'Unirme',
-        waitingStart: 'Esperando inicio',
-        players: 'Jugadores',
-        votes: 'Votos',
-        round: 'Ronda',
-        never: 'YO NUNCA...',
-        waitingQuestion: 'Esperando pregunta...',
-        voteYes: 'Lo he hecho',
-        voteNo: 'No lo he hecho',
-        results: 'Resultados',
-        resultYes: 'Si',
-        resultNo: 'No',
-        resultNotVoted: 'No votado',
-        reactions: 'Reacciones',
-        finishedTitle: 'Partida finalizada',
-        finishedSubtitle: 'Resumen de rondas',
-        leaveRoom: 'Salir de sala',
-        disconnected: 'Sin conectar',
-        connectedToHost: 'Conectado al host',
-        leftRoom: 'Has salido de la sala.',
-        invalidOffer: 'Oferta de conexion invalida.',
-        channelOpenError: 'No se pudo abrir el canal con el host.',
-        joiningWait: 'Uniendote... esperando confirmacion del host.',
-        connectHostError: 'Error al conectarte al host.',
-        connectedWaitStart: 'Conectado. Esperando inicio de partida...',
-        connectionClosed: 'Conexion cerrada. El host ha salido o se perdio la sesion.',
-        roomClosed: 'La sala se cerro.',
-        invalidCode: 'Introduce un codigo valido (minimo 5 caracteres).',
-        secureAuthError: 'No se pudo iniciar sesion segura.',
-        searchingRoom: 'Buscando sala {roomCode}...',
-        roomPill: 'Sala {roomCode}',
-        noActiveRoom: 'No existe una sala activa con ese codigo.',
-        roomNoLongerExists: 'La sala ya no existe.',
-        roomClosedByHost: 'La sala fue cerrada por el host.',
-        waitingInvite: 'Esperando invitacion del host...',
-        watchRoomError: 'Error observando la sala: {error}',
-        voteSent: 'Voto enviado.',
-        voteSendError: 'No se pudo enviar el voto.',
-        reactionSendError: 'No se pudo enviar la reaccion.',
-        phaseQuestion: 'En pregunta',
-        phaseResults: 'Resultados',
-        phaseFinished: 'Finalizada',
-        phaseClosed: 'Cerrada',
-        phaseLobby: 'Lobby',
-        votedInRound: 'Ya votaste en esta ronda.',
-        summaryUnavailable: 'No hay resumen disponible.',
-        summaryRound: 'Ronda {round}',
-        summaryStats: 'Si: {yes} | No: {no} | No votado: {notVoted}',
-        roomClosedStatus: 'Sala cerrada por el host.',
-        timer: 'Tiempo: {secs}s',
-        authReloadError: 'Error de autenticacion segura. Recarga la pagina.',
-        readyPrompt: 'Listo. Introduce el codigo de partida para unirte.'
-      },
-      en: {
-        pageTitle: 'Never Have I Ever - Party Mode',
-        pageDescription: 'Join an online Party room with a code and play from your browser.',
-        heroTitle: 'Never Have I Ever - Party Mode',
-        heroSub: 'Join using the game code shared by the host from the app. This page is intended for players (not host).',
-        roomCodeLabel: 'Game code',
-        joinButton: 'Join',
-        waitingStart: 'Waiting to start',
-        players: 'Players',
-        votes: 'Votes',
-        round: 'Round',
-        never: 'NEVER HAVE I EVER...',
-        waitingQuestion: 'Waiting for prompt...',
-        voteYes: 'I have',
-        voteNo: 'I have not',
-        results: 'Results',
-        resultYes: 'Yes',
-        resultNo: 'No',
-        resultNotVoted: 'Not voted',
-        reactions: 'Reactions',
-        finishedTitle: 'Game finished',
-        finishedSubtitle: 'Round summary',
-        leaveRoom: 'Leave room',
-        disconnected: 'Not connected',
-        connectedToHost: 'Connected to host',
-        leftRoom: 'You left the room.',
-        invalidOffer: 'Invalid connection offer.',
-        channelOpenError: 'Could not open data channel with host.',
-        joiningWait: 'Joining... waiting for host confirmation.',
-        connectHostError: 'Error connecting to host.',
-        connectedWaitStart: 'Connected. Waiting for game start...',
-        connectionClosed: 'Connection closed. The host left or the session was lost.',
-        roomClosed: 'The room was closed.',
-        invalidCode: 'Enter a valid code (minimum 5 characters).',
-        secureAuthError: 'Could not start secure session.',
-        searchingRoom: 'Searching room {roomCode}...',
-        roomPill: 'Room {roomCode}',
-        noActiveRoom: 'No active room exists with that code.',
-        roomNoLongerExists: 'Room no longer exists.',
-        roomClosedByHost: 'The room was closed by the host.',
-        waitingInvite: 'Waiting for host invite...',
-        watchRoomError: 'Error watching room: {error}',
-        voteSent: 'Vote sent.',
-        voteSendError: 'Could not send vote.',
-        reactionSendError: 'Could not send reaction.',
-        phaseQuestion: 'Question',
-        phaseResults: 'Results',
-        phaseFinished: 'Finished',
-        phaseClosed: 'Closed',
-        phaseLobby: 'Lobby',
-        votedInRound: 'You already voted in this round.',
-        summaryUnavailable: 'No summary available.',
-        summaryRound: 'Round {round}',
-        summaryStats: 'Yes: {yes} | No: {no} | Not voted: {notVoted}',
-        roomClosedStatus: 'Room closed by host.',
-        timer: 'Time: {secs}s',
-        authReloadError: 'Secure authentication error. Reload the page.',
-        readyPrompt: 'Ready. Enter the game code to join.'
-      },
-      fr: {
-        pageTitle: 'Je n ai jamais - Mode Party',
-        pageDescription: 'Rejoins une salle Party en ligne avec un code et joue depuis ton navigateur.',
-        heroTitle: 'Je n ai jamais - Mode Party',
-        heroSub: 'Entre avec le code de partie partage par l hote depuis l app. Cette page est pensee pour les joueurs (pas l hote).',
-        roomCodeLabel: 'Code de partie',
-        joinButton: 'Rejoindre',
-        waitingStart: 'En attente du debut',
-        players: 'Joueurs',
-        votes: 'Votes',
-        round: 'Manche',
-        never: 'JE N AI JAMAIS...',
-        waitingQuestion: 'En attente de la question...',
-        voteYes: 'Je l ai fait',
-        voteNo: 'Je ne l ai pas fait',
-        results: 'Resultats',
-        resultYes: 'Oui',
-        resultNo: 'Non',
-        resultNotVoted: 'Pas vote',
-        reactions: 'Reactions',
-        finishedTitle: 'Partie terminee',
-        finishedSubtitle: 'Resume des manches',
-        leaveRoom: 'Quitter la salle',
-        disconnected: 'Non connecte',
-        connectedToHost: 'Connecte a l hote',
-        leftRoom: 'Tu as quitte la salle.',
-        invalidOffer: 'Offre de connexion invalide.',
-        channelOpenError: 'Impossible d ouvrir le canal avec l hote.',
-        joiningWait: 'Connexion... en attente de confirmation de l hote.',
-        connectHostError: 'Erreur de connexion a l hote.',
-        connectedWaitStart: 'Connecte. En attente du debut de partie...',
-        connectionClosed: 'Connexion fermee. L hote est parti ou la session est perdue.',
-        roomClosed: 'La salle a ete fermee.',
-        invalidCode: 'Entre un code valide (minimum 5 caracteres).',
-        secureAuthError: 'Impossible de demarrer une session securisee.',
-        searchingRoom: 'Recherche de la salle {roomCode}...',
-        roomPill: 'Salle {roomCode}',
-        noActiveRoom: 'Aucune salle active avec ce code.',
-        roomNoLongerExists: 'La salle n existe plus.',
-        roomClosedByHost: 'La salle a ete fermee par l hote.',
-        waitingInvite: 'En attente de l invitation de l hote...',
-        watchRoomError: 'Erreur pendant l observation de la salle : {error}',
-        voteSent: 'Vote envoye.',
-        voteSendError: 'Impossible d envoyer le vote.',
-        reactionSendError: 'Impossible d envoyer la reaction.',
-        phaseQuestion: 'Question',
-        phaseResults: 'Resultats',
-        phaseFinished: 'Terminee',
-        phaseClosed: 'Fermee',
-        phaseLobby: 'Lobby',
-        votedInRound: 'Tu as deja vote dans cette manche.',
-        summaryUnavailable: 'Aucun resume disponible.',
-        summaryRound: 'Manche {round}',
-        summaryStats: 'Oui: {yes} | Non: {no} | Pas vote: {notVoted}',
-        roomClosedStatus: 'Salle fermee par l hote.',
-        timer: 'Temps: {secs}s',
-        authReloadError: 'Erreur d authentification securisee. Recharge la page.',
-        readyPrompt: 'Pret. Entre le code de partie pour rejoindre.'
-      },
-      de: {
-        pageTitle: 'Ich habe noch nie - Party-Modus',
-        pageDescription: 'Tritt einem Online-Party-Raum per Code bei und spiele im Browser.',
-        heroTitle: 'Ich habe noch nie - Party-Modus',
-        heroSub: 'Tritt mit dem vom Host in der App geteilten Spielcode bei. Diese Seite ist fur Spieler gedacht (nicht fur Host).',
-        roomCodeLabel: 'Spielcode',
-        joinButton: 'Beitreten',
-        waitingStart: 'Warten auf Start',
-        players: 'Spieler',
-        votes: 'Stimmen',
-        round: 'Runde',
-        never: 'ICH HABE NOCH NIE...',
-        waitingQuestion: 'Warten auf Frage...',
-        voteYes: 'Habe ich gemacht',
-        voteNo: 'Habe ich nicht gemacht',
-        results: 'Ergebnisse',
-        resultYes: 'Ja',
-        resultNo: 'Nein',
-        resultNotVoted: 'Nicht abgestimmt',
-        reactions: 'Reaktionen',
-        finishedTitle: 'Spiel beendet',
-        finishedSubtitle: 'Rundenubersicht',
-        leaveRoom: 'Raum verlassen',
-        disconnected: 'Nicht verbunden',
-        connectedToHost: 'Mit Host verbunden',
-        leftRoom: 'Du hast den Raum verlassen.',
-        invalidOffer: 'Ungueltiges Verbindungsangebot.',
-        channelOpenError: 'Datenkanal zum Host konnte nicht geoffnet werden.',
-        joiningWait: 'Beitritt... warte auf Bestatigung vom Host.',
-        connectHostError: 'Fehler bei der Verbindung zum Host.',
-        connectedWaitStart: 'Verbunden. Warte auf Spielstart...',
-        connectionClosed: 'Verbindung geschlossen. Host hat den Raum verlassen oder Sitzung verloren.',
-        roomClosed: 'Der Raum wurde geschlossen.',
-        invalidCode: 'Gib einen gueltigen Code ein (mindestens 5 Zeichen).',
-        secureAuthError: 'Sichere Sitzung konnte nicht gestartet werden.',
-        searchingRoom: 'Suche Raum {roomCode}...',
-        roomPill: 'Raum {roomCode}',
-        noActiveRoom: 'Kein aktiver Raum mit diesem Code vorhanden.',
-        roomNoLongerExists: 'Der Raum existiert nicht mehr.',
-        roomClosedByHost: 'Der Raum wurde vom Host geschlossen.',
-        waitingInvite: 'Warte auf Einladung vom Host...',
-        watchRoomError: 'Fehler beim Beobachten des Raums: {error}',
-        voteSent: 'Stimme gesendet.',
-        voteSendError: 'Stimme konnte nicht gesendet werden.',
-        reactionSendError: 'Reaktion konnte nicht gesendet werden.',
-        phaseQuestion: 'Frage',
-        phaseResults: 'Ergebnisse',
-        phaseFinished: 'Beendet',
-        phaseClosed: 'Geschlossen',
-        phaseLobby: 'Lobby',
-        votedInRound: 'Du hast in dieser Runde bereits abgestimmt.',
-        summaryUnavailable: 'Keine Zusammenfassung verfugbar.',
-        summaryRound: 'Runde {round}',
-        summaryStats: 'Ja: {yes} | Nein: {no} | Nicht abgestimmt: {notVoted}',
-        roomClosedStatus: 'Raum vom Host geschlossen.',
-        timer: 'Zeit: {secs}s',
-        authReloadError: 'Fehler bei sicherer Authentifizierung. Seite neu laden.',
-        readyPrompt: 'Bereit. Gib den Spielcode ein, um beizutreten.'
-      },
-      pt: {
-        pageTitle: 'Eu Nunca - Modo Party',
-        pageDescription: 'Entra numa sala Party Online com codigo e joga no teu navegador.',
-        heroTitle: 'Eu Nunca - Modo Party',
-        heroSub: 'Entra com o codigo de partida partilhado pelo host na app. Esta pagina e para jogadores (nao host).',
-        roomCodeLabel: 'Codigo da partida',
-        joinButton: 'Entrar',
-        waitingStart: 'A aguardar inicio',
-        players: 'Jogadores',
-        votes: 'Votos',
-        round: 'Ronda',
-        never: 'EU NUNCA...',
-        waitingQuestion: 'A aguardar pergunta...',
-        voteYes: 'Ja fiz',
-        voteNo: 'Nao fiz',
-        results: 'Resultados',
-        resultYes: 'Sim',
-        resultNo: 'Nao',
-        resultNotVoted: 'Nao votou',
-        reactions: 'Reacoes',
-        finishedTitle: 'Partida terminada',
-        finishedSubtitle: 'Resumo das rondas',
-        leaveRoom: 'Sair da sala',
-        disconnected: 'Sem ligacao',
-        connectedToHost: 'Ligado ao host',
-        leftRoom: 'Saiste da sala.',
-        invalidOffer: 'Oferta de ligacao invalida.',
-        channelOpenError: 'Nao foi possivel abrir o canal com o host.',
-        joiningWait: 'A entrar... a aguardar confirmacao do host.',
-        connectHostError: 'Erro ao ligar ao host.',
-        connectedWaitStart: 'Ligado. A aguardar inicio da partida...',
-        connectionClosed: 'Ligacao fechada. O host saiu ou a sessao perdeu-se.',
-        roomClosed: 'A sala foi encerrada.',
-        invalidCode: 'Introduz um codigo valido (minimo 5 caracteres).',
-        secureAuthError: 'Nao foi possivel iniciar sessao segura.',
-        searchingRoom: 'A procurar sala {roomCode}...',
-        roomPill: 'Sala {roomCode}',
-        noActiveRoom: 'Nao existe sala ativa com esse codigo.',
-        roomNoLongerExists: 'A sala ja nao existe.',
-        roomClosedByHost: 'A sala foi encerrada pelo host.',
-        waitingInvite: 'A aguardar convite do host...',
-        watchRoomError: 'Erro ao observar sala: {error}',
-        voteSent: 'Voto enviado.',
-        voteSendError: 'Nao foi possivel enviar o voto.',
-        reactionSendError: 'Nao foi possivel enviar a reacao.',
-        phaseQuestion: 'Pergunta',
-        phaseResults: 'Resultados',
-        phaseFinished: 'Terminada',
-        phaseClosed: 'Encerrada',
-        phaseLobby: 'Lobby',
-        votedInRound: 'Ja votaste nesta ronda.',
-        summaryUnavailable: 'Nao ha resumo disponivel.',
-        summaryRound: 'Ronda {round}',
-        summaryStats: 'Sim: {yes} | Nao: {no} | Nao votado: {notVoted}',
-        roomClosedStatus: 'Sala encerrada pelo host.',
-        timer: 'Tempo: {secs}s',
-        authReloadError: 'Erro de autenticacao segura. Recarrega a pagina.',
-        readyPrompt: 'Pronto. Introduz o codigo da partida para entrares.'
-      },
-      it: {
-        pageTitle: 'Non ho mai - Modalita Party',
-        pageDescription: 'Entra in una sala Party Online con codice e gioca dal browser.',
-        heroTitle: 'Non ho mai - Modalita Party',
-        heroSub: 'Entra con il codice partita condiviso dall host tramite app. Questa pagina e pensata per i giocatori (non host).',
-        roomCodeLabel: 'Codice partita',
-        joinButton: 'Entra',
-        waitingStart: 'In attesa di inizio',
-        players: 'Giocatori',
-        votes: 'Voti',
-        round: 'Round',
-        never: 'NON HO MAI...',
-        waitingQuestion: 'In attesa della frase...',
-        voteYes: 'L ho fatto',
-        voteNo: 'Non l ho fatto',
-        results: 'Risultati',
-        resultYes: 'Si',
-        resultNo: 'No',
-        resultNotVoted: 'Non votato',
-        reactions: 'Reazioni',
-        finishedTitle: 'Partita terminata',
-        finishedSubtitle: 'Riepilogo round',
-        leaveRoom: 'Esci dalla sala',
-        disconnected: 'Non connesso',
-        connectedToHost: 'Connesso all host',
-        leftRoom: 'Hai lasciato la sala.',
-        invalidOffer: 'Offerta di connessione non valida.',
-        channelOpenError: 'Impossibile aprire il canale con l host.',
-        joiningWait: 'Accesso in corso... in attesa della conferma host.',
-        connectHostError: 'Errore durante la connessione all host.',
-        connectedWaitStart: 'Connesso. In attesa dell avvio partita...',
-        connectionClosed: 'Connessione chiusa. L host e uscito o la sessione e stata persa.',
-        roomClosed: 'La sala e stata chiusa.',
-        invalidCode: 'Inserisci un codice valido (almeno 5 caratteri).',
-        secureAuthError: 'Impossibile avviare una sessione sicura.',
-        searchingRoom: 'Ricerca sala {roomCode}...',
-        roomPill: 'Sala {roomCode}',
-        noActiveRoom: 'Non esiste una sala attiva con quel codice.',
-        roomNoLongerExists: 'La sala non esiste piu.',
-        roomClosedByHost: 'La sala e stata chiusa dall host.',
-        waitingInvite: 'In attesa dell invito host...',
-        watchRoomError: 'Errore durante il monitoraggio sala: {error}',
-        voteSent: 'Voto inviato.',
-        voteSendError: 'Impossibile inviare il voto.',
-        reactionSendError: 'Impossibile inviare la reazione.',
-        phaseQuestion: 'Domanda',
-        phaseResults: 'Risultati',
-        phaseFinished: 'Terminata',
-        phaseClosed: 'Chiusa',
-        phaseLobby: 'Lobby',
-        votedInRound: 'Hai gia votato in questo round.',
-        summaryUnavailable: 'Nessun riepilogo disponibile.',
-        summaryRound: 'Round {round}',
-        summaryStats: 'Si: {yes} | No: {no} | Non votato: {notVoted}',
-        roomClosedStatus: 'Sala chiusa dall host.',
-        timer: 'Tempo: {secs}s',
-        authReloadError: 'Errore di autenticazione sicura. Ricarica la pagina.',
-        readyPrompt: 'Pronto. Inserisci il codice partita per entrare.'
-      }
-    };
-
-    function resolveLanguage(raw) {
-      const value = String(raw || '').trim().toLowerCase();
-      for (const code of SUPPORTED_LANGS) {
-        if (value === code || value.startsWith(code + '-') || value.startsWith(code + '_')) return code;
-      }
-      return 'es';
-    }
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const browserLang = (Array.isArray(navigator.languages) && navigator.languages[0]) || navigator.language || 'es';
-    const LANG = resolveLanguage(urlParams.get('lang') || browserLang);
-
-    function tr(key, vars = {}) {
-      const langDict = I18N[LANG] || I18N.es;
-      let value = langDict[key] || I18N.es[key] || key;
-      Object.keys(vars).forEach((name) => {
-        value = value.replaceAll('{' + name + '}', String(vars[name]));
-      });
-      return value;
-    }
-
-    function applyStaticTexts() {
-      document.documentElement.lang = LANG;
-      document.title = tr('pageTitle');
-      const metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc) metaDesc.setAttribute('content', tr('pageDescription'));
-
-      const heroTitle = document.getElementById('heroTitle');
-      if (heroTitle) heroTitle.textContent = tr('heroTitle');
-      const heroSub = document.getElementById('heroSub');
-      if (heroSub) heroSub.textContent = tr('heroSub');
-      const roomCodeLabel = document.getElementById('roomCodeLabel');
-      if (roomCodeLabel) roomCodeLabel.textContent = tr('roomCodeLabel');
-      const btnJoin = document.getElementById('btnJoin');
-      if (btnJoin) btnJoin.textContent = tr('joinButton');
-      const roundLabel = document.getElementById('roundLabel');
-      if (roundLabel) roundLabel.textContent = tr('round');
-      const questionPrefix = document.getElementById('questionPrefix');
-      if (questionPrefix) questionPrefix.textContent = tr('never');
-      const questionText = document.getElementById('questionText');
-      if (questionText) questionText.textContent = tr('waitingQuestion');
-      const btnYes = document.getElementById('btnYes');
-      if (btnYes) btnYes.textContent = tr('voteYes');
-      const btnNo = document.getElementById('btnNo');
-      if (btnNo) btnNo.textContent = tr('voteNo');
-      const resultsTitle = document.getElementById('resultsTitle');
-      if (resultsTitle) resultsTitle.textContent = tr('results');
-      const resultYesLabel = document.getElementById('resultYesLabel');
-      if (resultYesLabel) resultYesLabel.textContent = tr('resultYes');
-      const resultNoLabel = document.getElementById('resultNoLabel');
-      if (resultNoLabel) resultNoLabel.textContent = tr('resultNo');
-      const resultNotVotedLabel = document.getElementById('resultNotVotedLabel');
-      if (resultNotVotedLabel) resultNotVotedLabel.textContent = tr('resultNotVoted');
-      const reactionsTitle = document.getElementById('reactionsTitle');
-      if (reactionsTitle) reactionsTitle.textContent = tr('reactions');
-      const finishedTitle = document.getElementById('finishedTitle');
-      if (finishedTitle) finishedTitle.textContent = tr('finishedTitle');
-      const finishedSubtitle = document.getElementById('finishedSubtitle');
-      if (finishedSubtitle) finishedSubtitle.textContent = tr('finishedSubtitle');
-      const btnLeave = document.getElementById('btnLeave');
-      if (btnLeave) btnLeave.textContent = tr('leaveRoom');
-    }
-    const STUN_PRESETS = {
-      google: [
-        { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' },
-      ],
-      cloudflare: [
-        { urls: 'stun:stun.cloudflare.com:3478' },
-      ],
-      twilio: [
-        { urls: 'stun:global.stun.twilio.com:3478' },
-      ],
-      metered: [
-        { urls: 'stun:stun.metered.ca:80' },
-      ],
-    };
-
-    function buildStunFallbackServers(primaryProvider) {
-      const selected = STUN_PRESETS[primaryProvider] ? primaryProvider : 'google';
-      const ordered = [
-        ...STUN_PRESETS[selected],
-        ...Object.entries(STUN_PRESETS)
-          .filter(([provider]) => provider !== selected)
-          .flatMap(([, servers]) => servers),
-      ];
-
-      const seen = new Set();
-      const deduped = [];
-
-      ordered.forEach((server) => {
-        const rawUrls = Array.isArray(server.urls) ? server.urls : [server.urls];
-        const urls = rawUrls.map((entry) => String(entry || '').trim()).filter((entry) => entry.length > 0);
-        if (urls.length === 0) return;
-
-        const fingerprint = urls.join('|');
-        if (seen.has(fingerprint)) return;
-        seen.add(fingerprint);
-
-        deduped.push({
-          ...server,
-          urls: urls.length === 1 ? urls[0] : urls,
-        });
-      });
-
-      return deduped;
-    }
-
-    const PLAYER_STORAGE_KEY = 'party_web_player_id_v1';
-    const app = initializeApp(FIREBASE_CONFIG);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-
-    const ui = {
-      joinSection: document.getElementById('joinSection'),
-      joinControls: document.getElementById('joinControls'),
-      heroSub: document.getElementById('heroSub'),
-      heroTitle: document.getElementById('heroTitle'),
-      roomCodeLabel: document.getElementById('roomCodeLabel'),
-      roundLabel: document.getElementById('roundLabel'),
-      questionPrefix: document.getElementById('questionPrefix'),
-      resultsTitle: document.getElementById('resultsTitle'),
-      resultYesLabel: document.getElementById('resultYesLabel'),
-      resultNoLabel: document.getElementById('resultNoLabel'),
-      resultNotVotedLabel: document.getElementById('resultNotVotedLabel'),
-      reactionsTitle: document.getElementById('reactionsTitle'),
-      finishedTitle: document.getElementById('finishedTitle'),
-      finishedSubtitle: document.getElementById('finishedSubtitle'),
-      roomFooter: document.getElementById('roomFooter'),
-      roomCode: document.getElementById('roomCode'),
-      btnJoin: document.getElementById('btnJoin'),
-      btnLeave: document.getElementById('btnLeave'),
-      pillConn: document.getElementById('pillConn'),
-      pillRoom: document.getElementById('pillRoom'),
-      statusLine: document.getElementById('statusLine'),
-      gamePanel: document.getElementById('gamePanel'),
-      pillPhase: document.getElementById('pillPhase'),
-      pillPlayers: document.getElementById('pillPlayers'),
-      pillVotes: document.getElementById('pillVotes'),
-      pillTimer: document.getElementById('pillTimer'),
-      questionCard: document.getElementById('questionCard'),
-      resultsCard: document.getElementById('resultsCard'),
-      finishedCard: document.getElementById('finishedCard'),
-      roundNow: document.getElementById('roundNow'),
-      roundTotal: document.getElementById('roundTotal'),
-      questionText: document.getElementById('questionText'),
-      btnYes: document.getElementById('btnYes'),
-      btnNo: document.getElementById('btnNo'),
-      votedHint: document.getElementById('votedHint'),
-      resYes: document.getElementById('resYes'),
-      resNo: document.getElementById('resNo'),
-      resNV: document.getElementById('resNV'),
-      rcWow: document.getElementById('rcWow'),
-      rcHeart: document.getElementById('rcHeart'),
-      rcLaugh: document.getElementById('rcLaugh'),
-      rcFire: document.getElementById('rcFire'),
-      summaryList: document.getElementById('summaryList'),
-      reactBtns: Array.from(document.querySelectorAll('.react-btn')),
-    };
-
-    const state = {
-      playerId: getOrCreatePlayerId(),
-      roomCode: '',
-      connected: false,
-      joining: false,
-      rtcConfiguration: {
-        iceServers: buildStunFallbackServers('google'),
-        iceTransportPolicy: 'all',
-      },
-      roomSignalUnsub: null,
-      roomData: null,
-      players: [],
-      votesCount: 0,
-      localVotedRounds: new Set(),
-      attemptedOfferFingerprint: '',
-      authReadyPromise: null,
-      pc: null,
-      channel: null,
-    };
-
-    function getOrCreatePlayerId() {
-      try {
-        const existing = localStorage.getItem(PLAYER_STORAGE_KEY);
-        if (existing) return existing;
-        const id = 'party_' + Math.random().toString(36).slice(2, 10);
-        localStorage.setItem(PLAYER_STORAGE_KEY, id);
-        return id;
-      } catch {
-        return 'party_' + Math.random().toString(36).slice(2, 10);
-      }
-    }
-
-    async function ensureFirebaseAuth() {
-      if (auth.currentUser?.uid) return auth.currentUser.uid;
-
-      if (!state.authReadyPromise) {
-        state.authReadyPromise = signInAnonymously(auth)
-          .then((cred) => cred.user.uid)
-          .finally(() => {
-            state.authReadyPromise = null;
-          });
-      }
-
-      return state.authReadyPromise;
-    }
-    function normalizeRoomCode(raw) {
-      return String(raw || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
-    }
-
-    function safeJson(raw) {
-      try { return JSON.parse(raw); } catch { return null; }
-    }
-
-    function hide(el, shouldHide) {
-      if (!el) return;
-      el.classList.toggle('hide', !!shouldHide);
-    }
-
-    function setStatus(text, kind = 'info') {
-      const message = String(text || '').trim();
-      ui.statusLine.textContent = message;
-      ui.statusLine.style.color = kind === 'error' ? '#ffadb6' : kind === 'ok' ? '#b8ffd0' : '#9bb0d6';
-      hide(ui.statusLine, message.length === 0);
-    }
-
-    function updateJoinVisibility() {
-      const shouldHideJoinSection = state.connected || !!state.roomData;
-      const shouldShowRoomFooter = state.connected || !!state.roomData || !!state.roomCode || state.joining;
-      hide(ui.joinSection, shouldHideJoinSection);
-      hide(ui.joinControls, shouldHideJoinSection);
-      hide(ui.heroSub, shouldShowRoomFooter);
-      hide(ui.roomFooter, !shouldShowRoomFooter);
-    }
-
-    function setConnectedUI(connected) {
-      state.connected = connected;
-      ui.pillConn.textContent = connected ? tr('connectedToHost') : tr('disconnected');
-      ui.pillConn.className = connected ? 'pill ok' : 'pill';
-      ui.btnLeave.disabled = !state.roomCode;
-      updateJoinVisibility();
-    }
-
-    function closePeerConnection() {
-      if (state.channel) {
-        try { state.channel.close(); } catch {}
-      }
-      if (state.pc) {
-        try { state.pc.close(); } catch {}
-      }
-      state.channel = null;
-      state.pc = null;
-      setConnectedUI(false);
-    }
-
-    function resetGameState(keepRoomCode = false) {
-      state.roomData = null;
-      state.players = [];
-      state.votesCount = 0;
-      state.localVotedRounds.clear();
-      state.attemptedOfferFingerprint = '';
-      if (!keepRoomCode) state.roomCode = '';
-      render();
-    }
-
-    function leaveRoom(showMessage = true) {
-      closePeerConnection();
-      if (state.roomSignalUnsub) {
-        try { state.roomSignalUnsub(); } catch {}
-        state.roomSignalUnsub = null;
-      }
-      resetGameState(false);
-      if (showMessage) setStatus(tr('leftRoom'));
-      hide(ui.pillRoom, true);
-      ui.pillRoom.textContent = '';
-      ui.btnLeave.disabled = true;
-      updateJoinVisibility();
-    }
-
-    function parseOfferPayload(raw) {
-      const data = safeJson(raw);
-      if (!data || data.v !== 1 || data.type !== 'party_offer') return null;
-      if (!data.roomCode || !data.connectionId || !data.hostPlayerId || !data.offer) return null;
-      return data;
-    }
-
-    function parseWireMessage(raw) {
-      const data = safeJson(raw);
-      if (!data || typeof data !== 'object') return null;
-      if (data.type === 'sync') return data;
-      if (data.type === 'room_closed') return data;
-      return null;
-    }
-
-    function normalizeTurnUrls(value) {
-      if (Array.isArray(value)) return value.map((v) => String(v || '').trim()).filter((v) => v.length > 0);
-      if (typeof value === 'string') return value.split(/[,\n]/).map((v) => v.trim()).filter((v) => v.length > 0);
-      return [];
-    }
-
-    async function loadRtcConfigFromFeatureFlags() {
-      try {
-        const snap = await getDoc(doc(db, 'config', 'feature_flags'));
-        if (!snap.exists()) return;
-
-        const data = snap.data() || {};
-        const mode = String(data.party_connection_mode || 'stun').trim().toLowerCase();
-        if (mode === 'turn') {
-          const urls = normalizeTurnUrls(data.party_turn_urls);
-          if (urls.length > 0) {
-            const username = String(data.party_turn_username || '').trim();
-            const credential = String(data.party_turn_credential || '').trim();
-            state.rtcConfiguration = {
-              iceServers: [{ urls, ...(username ? { username } : {}), ...(credential ? { credential } : {}) }],
-              iceTransportPolicy: 'relay',
-            };
-            return;
+    // Solo cambia el texto, no el HTML interno (para no borrar iconos)
+    const applyI18n = () => {
+      const lang = getLang();
+      document.documentElement.lang = lang;
+      const texts = i18n[lang] || i18n.es;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n') || '';
+        if (key && texts[key]) {
+          if (el.classList.contains('store') && el.querySelector('.store-text')) {
+            el.querySelector('.store-text').textContent = texts[key];
+          } else if ((el.tagName === 'BUTTON' || el.tagName === 'A') && el.querySelector('.btn-text')) {
+            el.querySelector('.btn-text').textContent = texts[key];
+          } else if (el.tagName === 'BUTTON' || el.tagName === 'A') {
+            el.textContent = texts[key];
+          } else {
+            el.textContent = texts[key];
           }
         }
-
-        const providerRaw = String(data.party_stun_provider || 'google').trim().toLowerCase();
-        const provider = STUN_PRESETS[providerRaw] ? providerRaw : 'google';
-        state.rtcConfiguration = {
-          iceServers: buildStunFallbackServers(provider),
-          iceTransportPolicy: 'all',
-        };
-      } catch {}
-    }
-
-    async function waitForIceGatheringComplete(pc, timeoutMs = 8000) {
-      if (pc.iceGatheringState === 'complete') return;
-      await new Promise((resolve) => {
-        let done = false;
-        const finish = () => {
-          if (done) return;
-          done = true;
-          pc.removeEventListener('icegatheringstatechange', onIce);
-          resolve();
-        };
-        const onIce = () => {
-          if (pc.iceGatheringState === 'complete') finish();
-        };
-        pc.addEventListener('icegatheringstatechange', onIce);
-        setTimeout(finish, timeoutMs);
       });
+    };
+    const currentLang=()=>getLang();
+    const getText=(key)=>{const lang=currentLang();return(i18n[lang]||i18n.es)[key]||''}
+
+    const {initializeApp}=await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js");
+    const {getAuth,signInAnonymously}=await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js");
+    const {getDatabase,ref,get,onValue,remove,runTransaction,set,update,onDisconnect}=await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js");
+    const {getFirestore,collection,doc,onSnapshot,orderBy,query,setDoc,updateDoc,deleteDoc,Timestamp}=await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js");
+
+    const app=initializeApp(CFG),auth=getAuth(app),rtdb=getDatabase(app,CFG.databaseURL),db=getFirestore(app);
+    const byId=(id)=>document.getElementById(id);
+    const ui={heroSub:byId('heroSub'),joinSection:byId('joinSection'),joinControls:byId('joinControls'),roomFooter:byId('roomFooter'),roomCode:byId('roomCode'),joinButton:byId('joinButton'),btnLeave:byId('btnLeave'),statusLine:byId('statusLine'),pillConn:byId('pillConn'),pillRoom:byId('pillRoom'),pillPhase:byId('pillPhase'),pillPlayers:byId('pillPlayers'),pillVotes:byId('pillVotes'),pillTimer:byId('pillTimer'),gamePanel:byId('gamePanel'),gameHeader:byId('gameHeader'),gameRoomCode:byId('gameRoomCode'),btnLeaveGame:byId('btnLeaveGame'),lobbyCard:byId('lobbyCard'),lobbyPlayers:byId('lobbyPlayers'),roundTotalLobby:byId('roundTotalLobby'),lobbyStatus:byId('lobbyStatus'),questionCard:byId('questionCard'),questionStatusPill:byId('questionStatusPill'),roundNow:byId('roundNow'),roundTotal:byId('roundTotal'),yoNuncaText:byId('yoNuncaText'),questionPhrase:byId('questionPhrase'),btnYes:byId('btnYes'),btnNo:byId('btnNo'),votedHint:byId('votedHint'),resultsCard:byId('resultsCard'),resYes:byId('resYes'),resNo:byId('resNo'),resNV:byId('resNV'),rcWow:byId('rcWow'),rcHeart:byId('rcHeart'),rcLaugh:byId('rcLaugh'),rcFire:byId('rcFire'),reactButtons:[...document.querySelectorAll('.react')],finishedCard:byId('finishedCard'),summaryList:byId('summaryList'),closedCard:byId('closedCard')}
+    const state={authUid:null,roomCode:"",roomData:null,players:[],votesCount:0,connected:false,joining:false,queueWaitReject:null,queueAbortError:null,queueClaimInFlight:false,queueDocId:null,queuePosition:0,queueUnsubscribe:null,queueHeartbeatTimer:null,queueRetryTimer:null,roomUnsubscribe:null,playersUnsubscribe:null,slotDisconnect:null,playerDisconnect:null,presenceSlotKey:null,selfPlayerId:null,localVotedRounds:new Set(),localReactedRounds:new Set(),lastRoundId:null};
+
+    const root=(c)=>`partyRooms/${c}`,meta=(c)=>`${root(c)}/meta`,playersPath=(c)=>`${root(c)}/players`,playerPath=(c,p)=>`${playersPath(c)}/${p}`,votePath=(c,r,p)=>`${root(c)}/votes/${r}/${p}`,slotPath=(s)=>`partyPresence/slots/${s}`;
+    const hide=(el,v)=>el&&el.classList.toggle('hidden',!!v);
+    const normCode=(v)=>String(v||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8);
+    const rid=(p)=>`${p}_${Math.random().toString(36).slice(2,10)}`;
+    const esc=(s)=>String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
+    const reactions=(x)=>({wow:Math.max(0,Number(x?.wow||0)),heart:Math.max(0,Number(x?.heart||0)),laugh:Math.max(0,Number(x?.laugh||0)),fire:Math.max(0,Number(x?.fire||0))});
+    const reactionSelections=(x)=>!x||typeof x!=="object"?{}:Object.entries(x).reduce((acc,[playerId,reaction])=>{if(playerId&&(reaction==='wow'||reaction==='heart'||reaction==='laugh'||reaction==='fire'))acc[playerId]=reaction;return acc},{});
+    const roundResult=(x)=>!x||typeof x!=="object"?null:{yes:Math.max(0,Math.floor(Number(x.yes||0))),no:Math.max(0,Math.floor(Number(x.no||0))),notVoted:Math.max(0,Math.floor(Number(x.notVoted||0))),totalVotes:Math.max(0,Math.floor(Number(x.totalVotes||0))),totalPlayers:Math.max(0,Math.floor(Number(x.totalPlayers||0)))};
+    const roundRows=(x)=>Array.isArray(x)?x.map((e)=>{const r=roundResult(e);return r?{...r,roundNumber:Math.max(1,Math.floor(Number(e?.roundNumber||1))),questionText:typeof e?.questionText==="string"?e.questionText:""}:null}).filter(Boolean):[];
+    const roomData=(x,f='')=>({code:String(x?.code||f).trim(),hostPlayerId:String(x?.hostPlayerId||'').trim(),status:typeof x?.status==='string'?x.status:'lobby',voteTimeSeconds:Math.max(1,Math.floor(Number(x?.voteTimeSeconds||VOTE_SECONDS))),totalRounds:Math.max(1,Math.floor(Number(x?.totalRounds||TOTAL))),roundIndex:Number.isFinite(Number(x?.roundIndex))?Math.floor(Number(x.roundIndex)):-1,currentRoundId:typeof x?.currentRoundId==='string'&&x.currentRoundId?x.currentRoundId:null,questionText:typeof x?.questionText==='string'?x.questionText:null,questionDeadlineAt:Number.isFinite(Number(x?.questionDeadlineAt))?Number(x.questionDeadlineAt):null,resultsShownAt:Number.isFinite(Number(x?.resultsShownAt))?Number(x.resultsShownAt):null,results:roundResult(x?.results),reactionCounts:reactions(x?.reactionCounts),reactionSelections:reactionSelections(x?.reactionSelections),roundSummaries:roundRows(x?.roundSummaries),closedReason:typeof x?.closedReason==='string'?x.closedReason:null,transport:typeof x?.transport==='string'?x.transport:''});
+    const playerRows=(x)=>!x||typeof x!=="object"?[]:Object.values(x).map((e)=>!e||typeof e.id!=="string"||e.online!==true?null:{id:e.id,isHost:e.isHost===true,online:true}).filter(Boolean);
+    const queueFresh=(t,now)=>!!(t?.updatedAt&&typeof t.updatedAt.toMillis==='function'&&now-t.updatedAt.toMillis()<=QUEUE_STALE);
+    function stored(k,p){try{const e=localStorage.getItem(k);if(e)return e;const c=rid(p);localStorage.setItem(k,c);return c}catch{return rid(p)}}
+    function clientId(hostId){const base=stored(PLAYER_KEY,'party');if(base&&base!==hostId)return base;const alt=stored(CLIENT_KEY,'party_web');return alt!==hostId?alt:rid('party_web')}
+    function status(msg,type='info'){const t=String(msg||'').trim();if(!t){ui.statusLine.textContent='';ui.statusLine.className='status hidden';return}ui.statusLine.textContent=t;ui.statusLine.className=`status ${type}`}
+    // Cambia la visibilidad de los elementos según el estado de la sala
+    function joinVisibility() {
+      const d = state.roomData;
+      const phase = d?.status || '';
+      const inGame = d && (phase === 'question' || phase === 'results' || phase === 'finished');
+      // Mostrar siempre el logo y el header
+      document.querySelector('.top').classList.remove('hidden');
+      // Mostrar/ocultar panel de unión
+      hide(ui.joinSection, inGame || state.roomCode || state.connected || state.joining);
+      hide(ui.joinControls, inGame || state.roomCode || state.connected || state.joining);
+      // Footer solo si hay sala o se está uniendo
+      hide(ui.roomFooter, !(state.roomCode || state.joining || state.connected));
+      // Panel de juego solo si hay datos de sala
+      hide(ui.gamePanel, !d);
+      ui.btnLeave.disabled = !state.roomCode && !state.joining;
+    }
+    function connected(v){state.connected=v;ui.pillConn.textContent=v?getText('pillConnected'):getText('pillConn');ui.pillConn.className=v?'pill ok':'pill';joinVisibility()}
+    function reset(keep=false){state.roomData=null;state.players=[];state.votesCount=0;state.connected=false;state.localVotedRounds.clear();state.localReactedRounds.clear();state.lastRoundId=null;state.selfPlayerId=null;if(!keep)state.roomCode='';connected(false);render()}
+    async function ensureAuth(){if(auth.currentUser?.uid){state.authUid=auth.currentUser.uid;return state.authUid}try{const c=await signInAnonymously(auth);state.authUid=c.user.uid;return state.authUid}catch(e){console.error('[Party] auth',e);throw new Error('No se pudo iniciar sesion anonima en Firebase.')}}
+    async function cancelDisc(){const tasks=[];if(state.playerDisconnect){tasks.push(state.playerDisconnect.cancel().catch(()=>undefined));state.playerDisconnect=null}if(state.slotDisconnect){tasks.push(state.slotDisconnect.cancel().catch(()=>undefined));state.slotDisconnect=null}if(tasks.length)await Promise.allSettled(tasks)}
+    function stopWatch(){if(state.roomUnsubscribe){state.roomUnsubscribe();state.roomUnsubscribe=null}if(state.playersUnsubscribe){state.playersUnsubscribe();state.playersUnsubscribe=null}}
+    async function cleanupQueue(finalStatus='cancelled'){
+      if(state.queueHeartbeatTimer){window.clearInterval(state.queueHeartbeatTimer);state.queueHeartbeatTimer=null}
+      if(state.queueRetryTimer){window.clearInterval(state.queueRetryTimer);state.queueRetryTimer=null}
+      if(state.queueUnsubscribe){state.queueUnsubscribe();state.queueUnsubscribe=null}
+      const id=state.queueDocId;state.queueDocId=null;state.queuePosition=0;state.queueClaimInFlight=false;state.queueAbortError=null;
+      if(!id)return;
+      try{await updateDoc(doc(db,QUEUE,id),{status:finalStatus,updatedAt:Timestamp.now()})}catch{}
+      try{await deleteDoc(doc(db,QUEUE,id))}catch{}
     }
 
-    async function joinWithOffer(activeOffer) {
-      const offerData = parseOfferPayload(activeOffer);
-      if (!offerData) {
-        setStatus(tr('invalidOffer'), 'error');
+    async function releaseTransport(showMsg=false){
+      stopWatch();
+      if(state.queueWaitReject){const err=state.queueAbortError||new Error('Has salido de la cola virtual.');const reject=state.queueWaitReject;state.queueWaitReject=null;state.queueAbortError=err;reject(err)}
+      await cleanupQueue('cancelled');
+      await cancelDisc();
+      const tasks=[];
+      if(state.roomCode&&state.selfPlayerId)tasks.push(remove(ref(rtdb,playerPath(state.roomCode,state.selfPlayerId))).catch(()=>undefined));
+      if(state.presenceSlotKey)tasks.push(remove(ref(rtdb,slotPath(state.presenceSlotKey))).catch(()=>undefined));
+      if(tasks.length)await Promise.allSettled(tasks);
+      state.presenceSlotKey=null;reset(false);if(showMsg)status('Has salido de la sala.','info')
+    }
+
+    async function registerDisc(code,playerId){
+      state.playerDisconnect=onDisconnect(ref(rtdb,playerPath(code,playerId)));await state.playerDisconnect.remove();
+      if(state.presenceSlotKey){state.slotDisconnect=onDisconnect(ref(rtdb,slotPath(state.presenceSlotKey)));await state.slotDisconnect.remove()}
+    }
+
+    async function trySlot(authUid,code,playerId,role){
+      const sessionId=rid('party_session'),claimedAt=Date.now();
+      const tx=await runTransaction(ref(rtdb,'partyPresence/slots'),(currentValue)=>{
+        const current=currentValue&&typeof currentValue==='object'?{...currentValue}:{};let next=null;
+        for(let i=0;i<ACTIVE_SLOTS;i+=1){const key=`slot_${String(i).padStart(3,'0')}`;const value=current[key];if(!value||typeof value!=='object'||!value.sessionId){next=key;break}}
+        if(!next)return;current[next]={sessionId,authUid,playerId,roomCode:code,role,claimedAt};return current;
+      },{applyLocally:false});
+      if(!tx.committed)return false;
+      const entry=Object.entries(tx.snapshot.val()||{}).find(([,v])=>v?.sessionId===sessionId);if(!entry)throw new Error('No se pudo reservar capacidad para la sala.');state.presenceSlotKey=entry[0];return true;
+    }
+
+    async function waitQueue(authUid,code,playerId,role){
+      const qref=doc(collection(db,QUEUE));let resolved=false,admitted=false;state.queueDocId=qref.id;state.queueAbortError=null;state.queuePosition=0;
+      await setDoc(qref,{authUid,playerId,roomCode:code,role,sessionId:rid('party_queue'),status:'waiting',createdAt:Timestamp.now(),updatedAt:Timestamp.now()});
+      const heartbeat=async()=>{if(!state.queueDocId)return;try{await updateDoc(doc(db,QUEUE,state.queueDocId),{updatedAt:Timestamp.now()})}catch{}};
+      state.queueHeartbeatTimer=window.setInterval(()=>{void heartbeat()},QUEUE_HEART);
+      const q=query(collection(db,QUEUE),orderBy('createdAt','asc'));
+      await new Promise((resolve,reject)=>{
+        const ok=()=>{if(resolved)return;resolved=true;admitted=true;state.queueWaitReject=null;resolve()};
+        const fail=(error)=>{if(resolved)return;resolved=true;state.queueWaitReject=null;reject(error)};
+        state.queueWaitReject=fail;
+        const claim=async()=>{
+          if(resolved||state.queueClaimInFlight||!state.queueDocId)return;if(state.queueAbortError){fail(state.queueAbortError);return}if(state.queuePosition!==1)return;
+          state.queueClaimInFlight=true;
+          try{
+            const roomSnap=await get(ref(rtdb,meta(code)));if(!roomSnap.exists()){state.queueAbortError=new Error('La sala ya no esta disponible.');fail(state.queueAbortError);return}
+            const claimed=await trySlot(authUid,code,playerId,role);if(!claimed)return;
+            try{await updateDoc(doc(db,QUEUE,state.queueDocId),{status:'admitted',updatedAt:Timestamp.now()})}catch{}
+            ok();
+          }catch(error){fail(error instanceof Error?error:new Error(String(error?.message||'No se pudo salir de la cola.')))}
+          finally{state.queueClaimInFlight=false}
+        };
+        state.queueRetryTimer=window.setInterval(()=>{void claim()},QUEUE_RETRY);
+        state.queueUnsubscribe=onSnapshot(q,(snapshot)=>{
+          const now=Date.now();const waiting=snapshot.docs.map((d)=>({id:d.id,...d.data()})).filter((entry)=>entry.status==='waiting'&&queueFresh(entry,now));
+          const pos=waiting.findIndex((entry)=>entry.id===state.queueDocId)+1;state.queuePosition=pos>0?pos:0;if(state.queuePosition>0)status(`Servidores ocupados. Estas en la cola virtual. Posicion ${state.queuePosition}.`,'warn');void claim();
+        },(error)=>fail(new Error(error?.message||'No se pudo observar la cola virtual.')))
+      }).finally(async()=>{await cleanupQueue(admitted?'admitted':'cancelled')})
+    }
+
+    async function reserveSlot(authUid,code,playerId,role){if(await trySlot(authUid,code,playerId,role))return;status('Servidores ocupados. Entrando en cola virtual...','warn');await waitQueue(authUid,code,playerId,role)}
+    async function fetchRoomMetaWithRetry(code){
+      for(let attempt=1;attempt<=ROOM_LOOKUP_ATTEMPTS;attempt+=1){
+        const roomSnap=await get(ref(rtdb,meta(code)));
+        if(roomSnap.exists()) return roomSnap;
+        if(attempt<ROOM_LOOKUP_ATTEMPTS){
+          await new Promise((resolve)=>window.setTimeout(resolve,ROOM_LOOKUP_RETRY_MS));
+        }
+      }
+      throw new Error('No existe una sala activa con ese codigo.');
+    }
+    async function upsertPlayer(code,playerId,authUid){await set(ref(rtdb,playerPath(code,playerId)),{id:playerId,isHost:false,online:true,authUid,updatedAt:Date.now()})}
+
+    function render(){
+      const d=state.roomData;hide(ui.gamePanel,!d);hide(ui.gameHeader, !d);if(d) ui.gameRoomCode.textContent = state.roomCode;hide(document.querySelector('.hero'), !!d);hide(document.querySelector('.download'), !!d);hide(ui.roomFooter, !!d);ui.pillRoom.textContent=state.roomCode?`Sala ${state.roomCode}`:'Sala';hide(ui.pillRoom,!state.roomCode);ui.pillPlayers.textContent=`Jugadores: ${state.players.length}`;ui.pillVotes.textContent=`Votos: ${state.votesCount}`;ui.lobbyPlayers.textContent=String(state.players.length);
+      if(!d){ui.pillPhase.textContent='Esperando inicio';ui.pillPhase.className='pill';hide(ui.pillTimer,true);hide(ui.lobbyCard,true);hide(ui.questionCard,true);hide(ui.resultsCard,true);hide(ui.finishedCard,true);hide(ui.closedCard,true);ui.summaryList.innerHTML='';ui.votedHint.textContent='';joinVisibility();return}
+      const phase=d.status||'conectado';ui.roundTotalLobby.textContent=String(d.totalRounds||TOTAL);ui.lobbyStatus.textContent=phase==='question'?'Pregunta':phase==='results'?'Resultados':phase==='finished'?'Finalizada':phase==='closed'?'Cerrada':'Conectado';ui.pillPhase.textContent=phase==='question'?'En pregunta':phase==='results'?'Resultados':phase==='finished'?'Finalizada':phase==='closed'?'Cerrada':'Conectado';ui.pillPhase.className=phase==='question'?'pill warn':phase==='finished'?'pill ok':phase==='closed'?'pill danger':'pill';
+      hide(ui.lobbyCard,phase!=='lobby');hide(ui.questionCard,phase!=='question');hide(ui.resultsCard,phase!=='results');hide(ui.finishedCard,phase!=='finished');hide(ui.closedCard,phase!=='closed');
+      ui.rcWow.textContent=String(Number(d.reactionCounts?.wow||0));ui.rcHeart.textContent=String(Number(d.reactionCounts?.heart||0));ui.rcLaugh.textContent=String(Number(d.reactionCounts?.laugh||0));ui.rcFire.textContent=String(Number(d.reactionCounts?.fire||0));
+      const selectedReaction=state.selfPlayerId?String(d.reactionSelections?.[state.selfPlayerId]||''):'';
+      ui.reactButtons.forEach((button)=>button.classList.toggle('active',(button.dataset.r||'')===selectedReaction));
+      if(phase==='question'){ui.roundNow.textContent=String((d.roundIndex||0)+1);ui.roundTotal.textContent=String(d.totalRounds||TOTAL);ui.yoNuncaText.textContent='Yo nunca...';ui.questionPhrase.textContent=String(d.questionText||'...');hide(ui.questionStatusPill, true);const voted=state.localVotedRounds.has(d.roundIndex);ui.btnYes.disabled=voted||!state.connected;ui.btnNo.disabled=voted||!state.connected;ui.votedHint.textContent=voted?'Ya votaste en esta ronda.':''}
+      if(phase==='results'){const r=d.results||{yes:0,no:0,notVoted:0};ui.resYes.textContent=String(r.yes||0);ui.resNo.textContent=String(r.no||0);ui.resNV.textContent=String(r.notVoted||0)}
+      if(phase==='finished'){const rows=Array.isArray(d.roundSummaries)?d.roundSummaries:[];ui.summaryList.innerHTML=rows.length?rows.map((row)=>`<div class="summaryItem"><div class="muted">Ronda ${Number(row.roundNumber||0)}</div><strong>Yo nunca... ${esc(String(row.questionText||''))}</strong><div class="muted">Si: ${Number(row.yes||0)} | No: ${Number(row.no||0)} | Sin votar: ${Number(row.notVoted||0)}</div></div>`).join(''):'<div class="summaryItem muted">No hay resumen disponible.</div>'}
+      joinVisibility()
+    }
+
+    function timer(){const d=state.roomData;if(!d||d.status!=='question'||!d.questionDeadlineAt){hide(ui.pillTimer,true);return}const secs=Math.max(0,Math.ceil((Number(d.questionDeadlineAt)-Date.now())/1000));ui.pillTimer.textContent=`Tiempo: ${secs}s`;hide(ui.pillTimer,false)}
+    function watchPlayers(code){if(state.playersUnsubscribe)state.playersUnsubscribe();state.playersUnsubscribe=onValue(ref(rtdb,playersPath(code)),(snap)=>{state.players=playerRows(snap.val());render()},(e)=>status(`No se pudo observar la lista de jugadores: ${e?.message||'desconocido'}`,'error'))}
+    function watchRoom(code){
+      if(state.roomUnsubscribe)state.roomUnsubscribe();
+      state.roomUnsubscribe=onValue(ref(rtdb,meta(code)),(snap)=>{
+        if(!snap.exists()){
+          connected(false);status('La sala ya no esta disponible.','error');
+          state.roomData={code,hostPlayerId:'',status:'closed',voteTimeSeconds:VOTE_SECONDS,totalRounds:TOTAL,roundIndex:-1,currentRoundId:null,questionText:null,questionDeadlineAt:null,resultsShownAt:null,results:null,reactionCounts:reactions(null),roundSummaries:[],closedReason:'room_missing',transport:''};
+          render();return;
+        }
+        const raw=snap.val(),d=roomData(raw,code);
+        if(d.transport&&d.transport!=='rtdb'){status('Esta sala usa un transporte distinto y no es compatible con esta pagina.','error');connected(false);return}
+        state.roomData=d;state.votesCount=Math.max(0,Math.floor(Number(raw?.votesCount||0)));
+        if(d.currentRoundId!==state.lastRoundId){state.lastRoundId=d.currentRoundId;if(d.status==='question')ui.votedHint.textContent=''}
+        const active=d.status==='lobby'||d.status==='question'||d.status==='results';connected(active);
+        if(d.status==='lobby')status('Conectado. Esperando a que el host inicie la partida.','success');
+        else if(d.status==='question')status('Nueva pregunta disponible. Tu voto es anonimo.','success');
+        else if(d.status==='results')status('La ronda termino. Ya puedes reaccionar.','info');
+        else if(d.status==='finished')status('La partida ha terminado. Puedes revisar el resumen final.','success');
+        else if(d.status==='closed')status('La sala fue cerrada por el host.','warn');
+        render();
+      },(e)=>{console.error('[Party] room',e);status(`No se pudo observar la sala en tiempo real: ${e?.message||'desconocido'}`,'error');connected(false)})
+    }
+
+    async function joinRoomFlow(rawCode) {
+      const code = normCode(rawCode);
+      if (code.length < 5) {
+        status('Introduce un codigo valido de 5 a 8 caracteres.', 'error');
+        ui.roomCode.focus();
         return;
       }
-
+      if (state.joining) return;
       state.joining = true;
-      state.attemptedOfferFingerprint = offerData.connectionId + ':' + String(offerData.roomCode || '');
-
+      state.roomCode = code;
+      joinVisibility();
+      status(`Conectando para entrar en la sala ${code}...`, 'info');
       try {
-        closePeerConnection();
-
-        const pc = new RTCPeerConnection(state.rtcConfiguration);
-        state.pc = pc;
-
-        const channelReady = new Promise((resolve, reject) => {
-          const timeout = setTimeout(() => reject(new Error(tr('channelOpenError'))), 20000);
-          pc.ondatachannel = (event) => {
-            clearTimeout(timeout);
-            resolve(event.channel);
-          };
-        });
-
-        await pc.setRemoteDescription(new RTCSessionDescription(offerData.offer));
-        const answer = await pc.createAnswer();
-        await pc.setLocalDescription(answer);
-        await waitForIceGatheringComplete(pc);
-
-        const clientAuthUid = await ensureFirebaseAuth();
-
-        const answerPayload = {
-          v: 1,
-          type: 'party_answer',
-          roomCode: offerData.roomCode,
-          clientPlayerId: state.playerId,
-          connectionId: offerData.connectionId,
-          answer: pc.localDescription || answer,
-        };
-
-        await addDoc(collection(db, 'party_rooms', offerData.roomCode, 'answers'), {
-          connectionId: offerData.connectionId,
-          clientPlayerId: state.playerId,
-          clientAuthUid,
-          answerPayload: JSON.stringify(answerPayload),
-          createdAt: Date.now(),
-        });
-
-        const channel = await channelReady;
-        state.channel = channel;
-        bindDataChannel(channel);
-        setStatus(tr('joiningWait'));
-      } catch (err) {
-        closePeerConnection();
-        setStatus(err?.message || tr('connectHostError'), 'error');
+        await releaseTransport(false);
+        state.roomCode = code;
+        joinVisibility();
+        const authUid = await ensureAuth();
+        const roomSnap = await fetchRoomMetaWithRetry(code);
+        const d = roomData(roomSnap.val(), code);
+        if (d.status === 'closed') throw new Error('La sala esta cerrada.');
+        if (d.transport && d.transport !== 'rtdb') throw new Error('La sala no usa el modo Firebase compatible con esta pagina.');
+        let playerId = clientId(d.hostPlayerId);
+        if (playerId === d.hostPlayerId) {
+          playerId = `${playerId}_${Math.random().toString(36).slice(2, 8)}`;
+        }
+        state.selfPlayerId = playerId;
+        await reserveSlot(authUid, code, playerId, 'client');
+        await upsertPlayer(code, playerId, authUid);
+        await registerDisc(code, playerId);
+        ui.roomCode.value = code;
+        watchPlayers(code);
+        watchRoom(code);
+      } catch (error) {
+        console.error('[Party] join', error);
+        try {
+          await releaseTransport(false);
+        } catch (cleanupError) {
+          console.error('[Party] cleanup after failed join', cleanupError);
+        }
+        status(error instanceof Error ? error.message : 'No se pudo entrar en la sala.', 'error');
+        ui.roomCode.focus();
       } finally {
         state.joining = false;
+        joinVisibility();
       }
     }
 
-    function bindDataChannel(channel) {
-      channel.onopen = () => {
-        setConnectedUI(true);
-        try {
-          channel.send(JSON.stringify({ type: 'hello', playerId: state.playerId }));
-        } catch {}
-        setStatus(tr('connectedWaitStart'), 'ok');
-      };
-
-      channel.onclose = () => {
-        setConnectedUI(false);
-        if (state.roomData) {
-          state.roomData.status = 'closed';
-          state.roomData.closedReason = 'host_left';
-          render();
-        }
-        setStatus(tr('connectionClosed'), 'error');
-      };
-
-      channel.onmessage = (event) => {
-        const msg = parseWireMessage(event.data);
-        if (!msg) return;
-
-        if (msg.type === 'sync') {
-          state.roomData = msg.roomData || null;
-          state.players = Array.isArray(msg.players) ? msg.players : [];
-          state.votesCount = Number.isFinite(msg.votesCount) ? Math.max(0, Math.floor(msg.votesCount)) : 0;
-          render();
-          return;
-        }
-
-        if (msg.type === 'room_closed') {
-          if (state.roomData) {
-            state.roomData.status = 'closed';
-            state.roomData.closedReason = msg.reason || 'closed';
-          }
-          render();
-          setStatus(tr('roomClosed'), 'warn');
-        }
-      };
+    async function vote(choice){
+      if(!state.roomCode||!state.roomData||!state.selfPlayerId||!state.authUid)return;
+      if(state.roomData.status!=='question'||!state.roomData.currentRoundId)return;
+      if(state.localVotedRounds.has(state.roomData.roundIndex))return;
+      try{
+        await set(ref(rtdb,votePath(state.roomCode,state.roomData.currentRoundId,state.selfPlayerId)),{playerId:state.selfPlayerId,playerAuthUid:state.authUid,choice,roundIndex:state.roomData.roundIndex,roundId:state.roomData.currentRoundId,updatedAt:Date.now()});
+        state.localVotedRounds.add(state.roomData.roundIndex);ui.votedHint.textContent='Voto enviado correctamente.';render();
+      }catch(error){console.error('[Party] vote',error);status(`No se pudo registrar el voto: ${error?.message||'desconocido'}`,'error')}
     }
 
-    async function startJoinByCode(code) {
-      const roomCode = normalizeRoomCode(code);
-      if (roomCode.length < 5) {
-        setStatus(tr('invalidCode'), 'error');
-        return;
-      }
-      try {
-        await ensureFirebaseAuth();
-      } catch {
-        setStatus(tr('secureAuthError'), 'error');
-        return;
-      }
-
-      leaveRoom(false);
-      state.roomCode = roomCode;
-      ui.roomCode.value = roomCode;
-      ui.pillRoom.textContent = tr('roomPill', { roomCode });
-      hide(ui.pillRoom, false);
-      ui.btnLeave.disabled = false;
-      updateJoinVisibility();
-      setStatus(tr('searchingRoom', { roomCode }));
-
-      const roomRef = doc(db, 'party_rooms', roomCode);
-      const snap = await getDoc(roomRef);
-      if (!snap.exists()) {
-        leaveRoom(false);
-        setStatus(tr('noActiveRoom'), 'error');
-        return;
-      }
-
-      state.roomSignalUnsub = onSnapshot(roomRef, (roomSnap) => {
-        if (!roomSnap.exists()) {
-          setStatus(tr('roomNoLongerExists'), 'error');
-          return;
-        }
-
-        const data = roomSnap.data() || {};
-        if (data.status === 'closed') {
-          if (state.roomData) {
-            state.roomData.status = 'closed';
-            state.roomData.closedReason = 'closed';
-          }
-          render();
-          setStatus(tr('roomClosedByHost'), 'warn');
-        }
-
-        const activeOffer = String(data.activeOffer || '').trim();
-        const offerData = parseOfferPayload(activeOffer);
-        if (!offerData) {
-          if (!state.connected) setStatus(tr('waitingInvite'));
-          return;
-        }
-
-        const fingerprint = offerData.connectionId + ':' + offerData.roomCode;
-        if (state.connected || state.joining || state.attemptedOfferFingerprint === fingerprint) return;
-        void joinWithOffer(activeOffer);
-      }, (error) => {
-        setStatus(tr('watchRoomError', { error: error?.message || 'unknown' }), 'error');
-      });
+    async function react(reaction){
+      if(!state.roomCode||!state.roomData||state.roomData.status!=='results'||!state.selfPlayerId)return;
+      try{
+        await runTransaction(ref(rtdb,meta(state.roomCode)),(current)=>{
+          if(!current||typeof current!=='object'||current.status!=='results')return;
+          const nextCounts=reactions(current.reactionCounts),nextSelections=reactionSelections(current.reactionSelections),previousReaction=nextSelections[state.selfPlayerId];
+          if(previousReaction===reaction)return;
+          if(previousReaction)nextCounts[previousReaction]=Math.max(0,Number(nextCounts[previousReaction]||0)-1);
+          nextCounts[reaction]=Math.max(0,Number(nextCounts[reaction]||0))+1;
+          return {...current,reactionCounts:nextCounts,reactionSelections:{...nextSelections,[state.selfPlayerId]:reaction},updatedAt:Date.now()};
+        },{applyLocally:false})
+      }catch(error){console.error('[Party] react',error);status('No se pudo registrar la reaccion.','error')}
     }
 
-    function sendVote(choice) {
-      if (!state.channel || state.channel.readyState !== 'open' || !state.roomData) return;
-      if (state.roomData.status !== 'question') return;
+    ui.roomCode.addEventListener('input',()=>{ui.roomCode.value=normCode(ui.roomCode.value)});
+    ui.roomCode.addEventListener('keydown',(e)=>{if(e.key==='Enter'){e.preventDefault();void joinRoomFlow(ui.roomCode.value)}});
+    ui.joinButton.addEventListener('click',()=>{void joinRoomFlow(ui.roomCode.value)});
+    ui.btnLeave.addEventListener('click',()=>{void releaseTransport(true).then(()=>ui.roomCode.focus())});
+    ui.btnLeaveGame.addEventListener('click',()=>{void releaseTransport(true).then(()=>ui.roomCode.focus())});
+    ui.btnYes.addEventListener('click',()=>{void vote('yes')});
+    ui.btnNo.addEventListener('click',()=>{void vote('no')});
+    ui.reactButtons.forEach((button)=>button.addEventListener('click',()=>{void react(button.dataset.r||'')}));
 
-      const roundIndex = state.roomData.roundIndex;
-      if (state.localVotedRounds.has(roundIndex)) return;
-
-      try {
-        state.channel.send(JSON.stringify({ type: 'vote', choice, roundIndex }));
-        state.localVotedRounds.add(roundIndex);
-        ui.votedHint.textContent = tr('voteSent');
-        render();
-      } catch {
-        setStatus(tr('voteSendError'), 'error');
-      }
-    }
-
-    function sendReaction(reaction) {
-      if (!state.channel || state.channel.readyState !== 'open' || !state.roomData) return;
-      if (state.roomData.status !== 'results') return;
-
-      try {
-        state.channel.send(JSON.stringify({ type: 'reaction', reaction }));
-      } catch {
-        setStatus(tr('reactionSendError'), 'error');
-      }
-    }
-
-    function escapeHtml(s) {
-      return s
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
-    }
-
-    function render() {
-      const data = state.roomData;
-      hide(ui.gamePanel, !data);
-
-      if (!data) {
-        hide(ui.questionCard, true);
-        hide(ui.resultsCard, true);
-        hide(ui.finishedCard, true);
-        ui.pillPhase.textContent = tr('waitingStart');
-        ui.pillPlayers.textContent = tr('players') + ': 0';
-        ui.pillVotes.textContent = tr('votes') + ': 0';
-        ui.rcWow.textContent = '0';
-        ui.rcHeart.textContent = '0';
-        ui.rcLaugh.textContent = '0';
-        ui.rcFire.textContent = '0';
-        hide(ui.pillTimer, true);
-        updateJoinVisibility();
-        return;
-      }
-
-      updateJoinVisibility();
-      ui.pillPlayers.textContent = tr('players') + ': ' + (Array.isArray(state.players) ? state.players.length : 0);
-      ui.pillVotes.textContent = tr('votes') + ': ' + (state.votesCount || 0);
-
-      const phase = data.status || 'lobby';
-      ui.pillPhase.textContent =
-        phase === 'question' ? tr('phaseQuestion') :
-        phase === 'results' ? tr('phaseResults') :
-        phase === 'finished' ? tr('phaseFinished') :
-        phase === 'closed' ? tr('phaseClosed') :
-        tr('phaseLobby');
-      ui.pillPhase.className =
-        phase === 'closed' ? 'pill danger' :
-        phase === 'finished' ? 'pill ok' :
-        phase === 'question' ? 'pill warn' :
-        'pill';
-
-      hide(ui.questionCard, phase !== 'question');
-      hide(ui.resultsCard, phase !== 'results');
-      hide(ui.finishedCard, phase !== 'finished');
-
-      // Limpia el mensaje de "esperando inicio" cuando la partida ya esta en marcha.
-      if (phase !== 'lobby' && phase !== 'closed') {
-        setStatus('');
-      }
-
-      const reactionCounts = data.reactionCounts || {};
-      ui.rcWow.textContent = String(Number(reactionCounts.wow || 0));
-      ui.rcHeart.textContent = String(Number(reactionCounts.heart || 0));
-      ui.rcLaugh.textContent = String(Number(reactionCounts.laugh || 0));
-      ui.rcFire.textContent = String(Number(reactionCounts.fire || 0));
-
-      if (phase === 'question') {
-        ui.roundNow.textContent = String((data.roundIndex || 0) + 1);
-        ui.roundTotal.textContent = String(data.totalRounds || 10);
-        ui.questionText.textContent = String(data.questionText || tr('waitingQuestion'));
-        const voted = state.localVotedRounds.has(data.roundIndex);
-        ui.btnYes.disabled = voted;
-        ui.btnNo.disabled = voted;
-        ui.votedHint.textContent = voted ? tr('votedInRound') : '';
-      }
-
-      if (phase === 'results') {
-        const r = data.results || {};
-        ui.resYes.textContent = String(r.yes || 0);
-        ui.resNo.textContent = String(r.no || 0);
-        ui.resNV.textContent = String(r.notVoted || 0);
-      }
-
-      if (phase === 'finished') {
-        const rows = Array.isArray(data.roundSummaries) ? data.roundSummaries : [];
-        if (rows.length === 0) {
-          ui.summaryList.innerHTML = '<div class="summary-item muted">' + tr('summaryUnavailable') + '</div>';
-        } else {
-          ui.summaryList.innerHTML = rows.map((row) => (
-            '<div class="summary-item">' +
-              '<div class="muted">' + tr('summaryRound', { round: Number(row.roundNumber || 0) }) + '</div>' +
-              '<div style="margin:4px 0 6px;font-weight:700;">' + escapeHtml(String(row.questionText || '')) + '</div>' +
-              '<div class="muted">' + tr('summaryStats', { yes: Number(row.yes || 0), no: Number(row.no || 0), notVoted: Number(row.notVoted || 0) }) + '</div>' +
-            '</div>'
-          )).join('');
-        }
-      }
-
-      if (phase === 'closed') {
-        setStatus(tr('roomClosedStatus'), 'warn');
-      }
-    }
-
-    function updateTimer() {
-      const data = state.roomData;
-      if (!data || !data.questionDeadlineAt || data.status !== 'question') {
-        hide(ui.pillTimer, true);
-        return;
-      }
-      const secs = Math.max(0, Math.ceil((Number(data.questionDeadlineAt) - Date.now()) / 1000));
-      ui.pillTimer.textContent = tr('timer', { secs });
-      hide(ui.pillTimer, false);
-    }
-
-    ui.roomCode.addEventListener('input', () => {
-      ui.roomCode.value = normalizeRoomCode(ui.roomCode.value);
-    });
-
-    ui.btnJoin.addEventListener('click', () => {
-      void startJoinByCode(ui.roomCode.value);
-    });
-
-    ui.roomCode.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        void startJoinByCode(ui.roomCode.value);
-      }
-    });
-
-    ui.btnLeave.addEventListener('click', () => {
-      leaveRoom(true);
-    });
-
-    ui.btnYes.addEventListener('click', () => sendVote('yes'));
-    ui.btnNo.addEventListener('click', () => sendVote('no'));
-
-    ui.reactBtns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        sendReaction(btn.dataset.r || '');
-      });
-    });
-
-    setInterval(updateTimer, 300);
-    applyStaticTexts();
-    setConnectedUI(false);
-    render();
-    void loadRtcConfigFromFeatureFlags();
-    void ensureFirebaseAuth().catch(() => {
-      setStatus(tr('authReloadError'), 'error');
-    });
-
-    const params = new URLSearchParams(window.location.search);
-    const autoCode = normalizeRoomCode(params.get('party') || '');
-    if (autoCode) {
-      ui.roomCode.value = autoCode;
-      void startJoinByCode(autoCode);
-    } else {
-      setStatus(tr('readyPrompt'));
-    }
+    window.setInterval(timer,300);applyI18n();render();try{await ensureAuth()}catch(error){status(error instanceof Error?error.message:'No se pudo preparar Firebase.','error')}
+    const params=new URLSearchParams(window.location.search),autoCode=normCode(params.get('code')||params.get('party')||'');
+    if(autoCode){ui.roomCode.value=autoCode;void joinRoomFlow(autoCode)}else{ui.roomCode.focus()}
   </script>
 </body>
 </html>

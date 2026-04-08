@@ -29,7 +29,11 @@ export const APPS: App[] = [
     thumbnailUrl: `https://play-lh.googleusercontent.com/_4ACHU0CaAC0Isw-q9aMUQMs3dBCec-JstegoKjKHs4eMdsbgcgMMWoXr-mK1jsG0R7o4_z5SLVyGiH-wk1d7_g=w480-h960`,
     heroUrl: `https://play-lh.googleusercontent.com/_4ACHU0CaAC0Isw-q9aMUQMs3dBCec-JstegoKjKHs4eMdsbgcgMMWoXr-mK1jsG0R7o4_z5SLVyGiH-wk1d7_g=w480-h960`,
     screenshots: [
-      `https://play-lh.googleusercontent.com/9SNvkbT9RuCyEmKKgfv0873unHH8TdIWtQa4fJdRpmVan17IsjjX1Vi5RgUQf3Fj1tdhH8NiU0nHGkTapWcXEA=w1052-h592-rw`,
+      `https://play-lh.googleusercontent.com/YrfWWYFbkhJloMRnHz5Om1zWTlSAonNsIJKQxVX8kNHC-7x4xXbtk-TB7dvvXu3oTpelxi6urBmsvSu5_gie=w526-h296-rw`,
+      `https://play-lh.googleusercontent.com/Z-r9YAzbLLIKB4JQCX_2AsJKJvO2s9_YCxMBl2vrt6jZjpd8YqY9iIsYZTX1MdNw8WwKJgQogq8QTKbdbTKp=w526-h296-rw`,
+      `https://play-lh.googleusercontent.com/swGjy1ufleH24Ug3zXbGsywfzeq5PANkCybckBcE-tS3aqXPcBZuOz1voeuqjC3EnUjuiuw2NSYcKsN6RWDS0g=w526-h296-rw`,
+      `https://play-lh.googleusercontent.com/T3z5JHQEQjFi3S0KRw53kHrK5d9XrLmbdlK6LCtdck73mjp--NGd3RdxSz5891wTnx3VFBk6DcLnUBM-AiHFag=w526-h296-rw`,
+      `https://play-lh.googleusercontent.com/7UvzzUc3xsy6pzuEsv8n1s3noQ6sp1Qg-ZEoaU_COX-GJcwQnTmEUc-PzOybmaB-p1pLIpd22UQBcKZM5YnQnhQ=w526-h296-rw`,
       `https://play-lh.googleusercontent.com/0w_dDHNLZ8t0EzJekQ4SvDWwQq2TaUnYJFSkx0ipXXD75iz89leo5VvAcGsxV_cuYZ0_k9PBbeS8twDhB3Y6=w1052-h592-rw`,
       `https://play-lh.googleusercontent.com/kisN7RMqEOb833h8lPrfjRg14WMt5DhIKnMnyhfe6r6pMhIJQuwaNygG7sOZ0i6iqAPfxiHAYrq2uzV7yh_SkA=w1052-h592-rw`,
       `https://play-lh.googleusercontent.com/losq93-h_gKudEY2o68L9zHtcJCz7X7zAybaAteTpPjgSN6S-zwbV5movUJ2DhKIQP3URDegj_vep0GeVOWCFg=w1052-h592-rw`
